@@ -9,7 +9,6 @@ class Checker(pygame.sprite.Sprite):
 
     def __init__(self, x, y, color, all_sprites, image, left, top, cell_length, lines, rows):
         super().__init__(all_sprites)
-        self.all_sprites = all_sprites
 
         self.left, self.top = left, top
         self.cell_length = cell_length
@@ -21,8 +20,8 @@ class Checker(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = top + x * cell_length
+        self.rect.y = top + y * cell_length
 
         self.is_king = False
 
@@ -30,8 +29,8 @@ class Checker(pygame.sprite.Sprite):
         x, y = pos[0], pos[1]
         self.x, self.y = x, y
         self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
+        self.rect.x = self.top + self.cell_length * self.x
+        self.rect.y = self.top + self.cell_length * self.y
 
     def update(self, *args):
         self.get_event(args[0])
