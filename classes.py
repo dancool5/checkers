@@ -36,14 +36,6 @@ class Checker(pygame.sprite.Sprite):
     def update(self, *args):
         self.get_event(args[0])
 
-    def get_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            self.get_click(event.pos)
-
-    def get_click(self, pos):
-        if self.rect.collidepoint(pos):
-            self.make_move(pos)
-
 
 class Board:
     def __init__(self, left, top, cell_length, lines, rows):
