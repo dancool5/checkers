@@ -2,12 +2,13 @@ import pygame
 from classes import Board, Checker
 
 pygame.init()
-size = width, height = 500, 500
+width, height = 532, 532
+size = (width, height)
 screen = pygame.display.set_mode(size)
 FPS = 30
 
 all_sprites = []
-board = Board()
+board = Board(width)
 
 clock = pygame.time.Clock()
 running = True

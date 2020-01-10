@@ -20,29 +20,29 @@ class Checker(pygame.sprite.Sprite):
 
 
 class Board:
-    def __init__(self):
-        self.width, self.height = 8, 8
-        self.board = [[(i + j) % 2 for j in range(self.width)]
-                      for i in range(self.height)]
-        self.cell_size = 50
-        self.left = 15
-        self.top = 15
+    def __init__(self, width_screen):
+        self.left, self.top = 10, 10  # границы рамки
+        self.cell_length = (width_screen - self.left * 2) // 8
+        self.lines, self.rows = 8, 8
+        self.board = [[(i + j) % 2 for j in range(self.lines)]
+                      for i in range(self.rows)]
 
     def render(self, screen):
-        for i in range(self.height):
-            for j in range(self.width):
+        for i in range(self.rows):
+            for j in range(self.lines):
                 self.render_cell(i, j, screen)
 
     def render_cell(self, row, col, screen):
-        rect = (row * self.cell_size + self.left, col * self.cell_size + self.top, self.cell_size, self.cell_size)
+        rect = (row * self.cell_length + self.left, col * self.cell_length + self.top,
+                self.cell_length, self.cell_length)
         cc = False if self.board[row][col] else True
         pygame.draw.rect(screen, (255, 255, 255), rect, cc)
 
     def get_cell(self, mouse_pos):
         x, y = mouse_pos
-        x = (x - self.left) // self.cell_size
-        y = (y - self.top) // self.cell_size
-        if 0 <= x < self.height and 0 <= y < self.width:
+        x = (x - self.left) // self.cell_length
+        y = (y - self.top) // self.cell_length
+        if 0 <= x < self.rows and 0 <= y < self.lines:
             return (x, y)
 
     def get_click(self, mouse_pos):
