@@ -1,13 +1,3 @@
-import pygame
-from os import path
-
-
-def load_image(name):
-    fullname = path.join('data', name)
-    image = pygame.image.load(fullname).convert_alpha()
-    return image
-
-
 def can_kill(checker1, checker2, all_checkers):
     if not (checker1.is_king):
         if abs(checker1.x - checker2.x) == abs(checker1.y - checker2.y) == 1 and \
