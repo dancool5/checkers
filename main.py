@@ -62,6 +62,10 @@ while running:
                         selected_checker.make_move((x, y))
                         selected_checker = None
                         moving_color = 'white' if moving_color == 'black' else 'black'
+                    for checker in moving_checkers:
+                        if (checker.x, checker.y) == (x, y):
+                            selected_checker = checker
+                            break
 
     clock.tick(FPS)
 
