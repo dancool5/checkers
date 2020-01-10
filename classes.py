@@ -7,9 +7,13 @@ class Checker(pygame.sprite.Sprite):
     # w_checker = load_image('white_checker.png')
     # w_king = load_image('black_king.png')
 
-    def __init__(self, x, y, color, all_sprites, image):
+    def __init__(self, x, y, color, all_sprites, image, left, top, cell_length, lines, rows):
         super().__init__(all_sprites)
         self.all_sprites = all_sprites
+
+        self.left, self.top = left, top
+        self.cell_length = cell_length
+        self.lines, self.rows = lines, rows
 
         self.color = color
         self.image = image
@@ -22,19 +26,30 @@ class Checker(pygame.sprite.Sprite):
 
         self.is_king = False
 
-    def move(self, x, y):
+    def make_move(self, pos):
+        x, y = pos[0], pos[1]
         self.x, self.y = x, y
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
 
-    def delete(self, color_group):
-        self.all_sprites.remove(self)
-        color_group.remove(self)
+    def update(self, *args):
+        self.get_event(args[0])
+
+    def get_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            self.get_click(event.pos)
+
+    def get_click(self, pos):
+        if self.rect.collidepoint(pos):
+            self.make_move(pos)
 
 
 class Board:
-    def __init__(self, width_screen):
-        self.left, self.top = 10, 10  # границы рамки
-        self.cell_length = (width_screen - self.left * 2) // 8
-        self.lines, self.rows = 8, 8
+    def __init__(self, left, top, cell_length, lines, rows):
+        self.left, self.top = left, top
+        self.cell_length = cell_length
+        self.lines, self.rows = lines, rows
         self.board = []
 
     def render(self, screen):

@@ -17,20 +17,27 @@ FPS = 30
 clock = pygame.time.Clock()
 running = True
 
+left, top = 10, 10  # границы рамки
+cell_length = (width - left * 2) // 8
+lines, rows = 8, 8
+
 all_sprites = pygame.sprite.Group()
-board = Board(width)
+board = Board(left, top, cell_length, lines, rows)
 
 # добавление шашек на доску
 for row in range(5, 8):
     for col in range((row + 1) % 2, 8, 2):
-        image = pygame.transform.scale(load_image('white_checker.png'), (board.cell_length, board.cell_length))
-        checker = Checker(board.left + col * board.cell_length, board.top + row * board.cell_length, 'white', all_sprites, image)
+        image = pygame.transform.scale(load_image('white_checker.png'), (cell_length, cell_length))
+        image = pygame.transform.average_color(image, (0, 0, 0, 0))
+        checker = Checker(left + col * cell_length, top + row * cell_length, 'white', all_sprites, image, left, top,
+                          cell_length, lines, rows)
         board.board.append(checker)
 
 for row in range(0, 3):
     for col in range((row + 1) % 2, 8, 2):
-        image = pygame.transform.scale(load_image('black_checker.png'), (board.cell_length, board.cell_length))
-        checker = Checker(board.left + col * board.cell_length, board.top + row * board.cell_length, 'black', all_sprites, image)
+        image = pygame.transform.scale(load_image('black_checker.png'), (cell_length, cell_length))
+        checker = Checker(left + col * cell_length, top + row * cell_length, 'black', all_sprites, image, left, top,
+                          cell_length, lines, rows)
         board.board.append(checker)
 
 
@@ -40,6 +47,7 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             print(board.get_click(event.pos))
+            all_sprites.update(event)
 
     clock.tick(FPS)
 
