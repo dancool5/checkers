@@ -5,6 +5,25 @@ size = width, height = 500, 500
 screen = pygame.display.set_mode(size)
 FPS = 30
 
+all_sprites = []
+
+
+class Checker(pygame.sprite.Sprite):
+    def __init__(self, x, y, color, color_group):
+        super().__init__(all_sprites)
+        self.add(color_group)
+        self.x = x
+        self.y = y
+        self.color = color
+        self.is_king = False
+
+    def move(self, x, y):
+        self.x, self.y = x, y
+
+    def delete(self, color_group):
+        all_sprites.remove(self)
+        color_group.remove(self)
+
 
 class Board:
     def __init__(self):
