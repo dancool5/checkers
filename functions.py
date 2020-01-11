@@ -1,23 +1,42 @@
 def can_kill(checker1, checker2, all_checkers):
-    if abs(checker1.x - checker2.x) != 1 or abs(checker1.y - checker2.y) != 1:
-        return False
-
-    if checker1.x - checker2.x < 0:
-        if checker1.x + 2 > 7:
+    if not checker1.is_king:
+        if checker1.x - checker2.x < 0:
+            if checker1.x + 2 > 7:
+                return False
+        elif checker1.x - 2 < 0:
             return False
-    elif checker1.x - 2 < 0:
-        return False
 
-    if checker1.y - checker2.y < 0:
-        if checker1.y + 2 > 7:
+        if checker1.y - checker2.y < 0:
+            if checker1.y + 2 > 7:
+                return False
+        elif checker1.y - 2 < 0:
             return False
-    elif checker1.y - 2 < 0:
-        return False
 
-    for ch in all_checkers:
-        if checker2.x - checker1.x == ch.x - checker2.x and ch.y - checker2.y == checker2.y - checker1.y:
+        if abs(checker1.x - checker2.x) != 1 or abs(checker1.y - checker2.y) != 1:
             return False
-    return True
+
+        for ch in all_checkers:
+            if checker2.x - checker1.x == ch.x - checker2.x and ch.y - checker2.y == checker2.y - checker1.y:
+                return False
+        return True
+    else:
+        if abs(checker1.x - checker2.x) != abs(checker1.y - checker2.y):
+            return False
+        for i in range(1, abs(checker2.x - checker1.x)):
+            if checker2.x > checker1.x:
+                x = checker1.x + i
+            else:
+                x = checker1.x - i
+
+            if checker2.y > checker1.y:
+                y = checker1.y + i
+            else:
+                y = checker1.y - i
+
+            for check in all_checkers:
+                if check.x == x and check.y == y:
+                    return False
+        return True
 
 
 def is_killing_possible(moving_checkers, not_moving_checkers, all_checkers):
