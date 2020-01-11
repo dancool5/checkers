@@ -55,3 +55,13 @@ def can_move(checker, x, y, color):
         if abs(checker.x - x) == 1 and checker.y - y == -1:
             return True
     return False
+
+
+def check_winning(all_checkers):
+    color = 'black'
+    if [1 for check in all_checkers if check.color == color] == []:
+        return 'White wins'
+    color = 'white'
+    if [1 for check in all_checkers if check.color == color] == []:
+        return 'Black wins'
+    return None

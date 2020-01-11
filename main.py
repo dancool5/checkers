@@ -87,6 +87,11 @@ while running:
                             selected_checker = None
                             moving_color = 'black' if moving_color == 'white' else 'white'
 
+    win_text = functions.check_winning(board.board)
+    if win_text:
+        running = False
+        print(win_text)
+
     clock.tick(FPS)
 
     screen.fill(pygame.Color('black'))
