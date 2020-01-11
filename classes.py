@@ -43,26 +43,33 @@ class Board:
         self.lines, self.rows = lines, rows
         self.board = []
 
-    def render(self, screen):
+    def render(self, screen, selected_checker):
         for i in range(self.rows):
             for j in range(self.lines):
-                self.render_cell(i, j, screen)
+                self.render_cell(i, j, screen, selected_checker)
 
-    def render_cell(self, row, col, screen):
+    def render_cell(self, row, col, screen, selected_checker):
         rect = (row * self.cell_length + self.left, col * self.cell_length + self.top,
                 self.cell_length, self.cell_length)
-
-        if row % 2 == 0:
-            if col % 2 == 0:
+        color = None
+        if selected_checker:
+            if selected_checker.rect == rect:
+                color = (255, 0, 0)
                 color_flag = False
+        if not(color):
+            if row % 2 == 0:
+                if col % 2 == 0:
+                    color_flag = False
+                else:
+                    color_flag = True
+                color = (255, 255, 255)
             else:
-                color_flag = True
-        else:
-            if col % 2 == 0:
-                color_flag = True
-            else:
-                color_flag = False
-        pygame.draw.rect(screen, (255, 255, 255), rect, color_flag)
+                if col % 2 == 0:
+                    color_flag = True
+                else:
+                    color_flag = False
+                color = (255, 255, 255)
+        pygame.draw.rect(screen, color, rect, color_flag)
 
     def get_cell(self, mouse_pos):
         x, y = mouse_pos

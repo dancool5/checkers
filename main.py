@@ -43,6 +43,7 @@ for row in range(0, 3):
 
 moving_color = 'white'
 selected_checker = None
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -70,7 +71,7 @@ while running:
     clock.tick(FPS)
 
     screen.fill(pygame.Color('black'))
-    board.render(screen)
+    board.render(screen, selected_checker)
     all_sprites.draw(screen)
     pygame.display.flip()
 
