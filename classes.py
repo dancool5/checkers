@@ -24,8 +24,7 @@ class Checker(pygame.sprite.Sprite):
 
         self.is_king = False
 
-    def make_move(self, pos):
-        x, y = pos[0], pos[1]
+    def make_move(self, x, y):
         self.x, self.y = x, y
         self.rect = self.image.get_rect()
         self.rect.x = self.left + self.cell_length * self.x
@@ -80,4 +79,3 @@ class Board:
 
     def get_click(self, mouse_pos):
         return self.get_cell(mouse_pos)
-

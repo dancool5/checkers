@@ -40,7 +40,6 @@ for row in range(0, 3):
                           cell_length, lines, rows)
         board.board.append(checker)
 
-
 moving_color = 'white'
 selected_checker = None
 
@@ -53,7 +52,7 @@ while running:
                 selected_checker = functions.select(event.pos, board.board, moving_color)
             else:
                 x, y = board.get_cell(event.pos)
-                if x != None:
+                if x is not None:
                     for ch in board.board:
                         if ch.x == x and ch.y == y:
                             if ch.color == moving_color:
@@ -62,20 +61,31 @@ while running:
                             else:
                                 break
                     else:
-                        if functions.can_move(selected_checker, x, y, moving_color):
-                            selected_checker.make_move((x, y))
-                            selected_checker = None
-                            moving_color = 'black' if moving_color == 'white' else 'white'
-                        else:
-                            killed_checker = functions.can_kill(selected_checker, x, y, moving_color, board.board)
-                            if killed_checker:
-                                print(killed_checker.x, killed_checker.y)
+                        moving_ch = [ch for ch in board.board if ch.color == moving_color]
+                        not_moving_ch = [ch for ch in board.board if ch.color != moving_color]
+                        if functions.is_killing_possible(moving_ch, not_moving_ch, board.board):
+                            for ch in not_moving_ch:
+                                if (abs(x - ch.x) == 1 and abs(ch.y - y) == 1 and
+                                        abs(selected_checker.x - ch.x) == 1 and abs(ch.y - selected_checker.y) == 1):
+                                    killed_checker = ch
+                                    break
+                            else:
+                                killed_checker = selected_checker
+                            if functions.can_kill(selected_checker, killed_checker, board.board):
+                                print(killed_checker)
                                 all_sprites.remove(killed_checker)
                                 board.board.remove(killed_checker)
-                                selected_checker.make_move((x, y))
-                                selected_checker = None
-                                moving_color = 'black' if moving_color == 'white' else 'white'
-
+                                selected_checker.make_move(x, y)
+                                not_moving_ch = [ch for ch in board.board if ch.color != moving_color]
+                                if not(functions.is_killing_possible([selected_checker], not_moving_ch, board.board)):
+                                    moving_color = 'black' if moving_color == 'white' else 'white'
+                                    selected_checker = None
+                                else:
+                                    print(1)
+                        elif functions.can_move(selected_checker, x, y, moving_color):
+                            selected_checker.make_move(x, y)
+                            selected_checker = None
+                            moving_color = 'black' if moving_color == 'white' else 'white'
 
     clock.tick(FPS)
 
@@ -84,6 +94,4 @@ while running:
     all_sprites.draw(screen)
     pygame.display.flip()
 
-
 pygame.quit()
-print(board.board)
