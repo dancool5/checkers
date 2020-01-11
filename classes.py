@@ -17,8 +17,7 @@ class Checker(pygame.sprite.Sprite):
         self.color = color
         self.image = image
 
-        self.x = x
-        self.y = y
+        self.x, self.y = x, y
         self.rect = self.image.get_rect()
         self.rect.x = top + x * cell_length
         self.rect.y = top + y * cell_length
@@ -29,7 +28,7 @@ class Checker(pygame.sprite.Sprite):
         x, y = pos[0], pos[1]
         self.x, self.y = x, y
         self.rect = self.image.get_rect()
-        self.rect.x = self.top + self.cell_length * self.x
+        self.rect.x = self.left + self.cell_length * self.x
         self.rect.y = self.top + self.cell_length * self.y
 
     def update(self, *args):
@@ -77,6 +76,7 @@ class Board:
         y = (y - self.top) // self.cell_length
         if 0 <= x < self.rows and 0 <= y < self.lines:
             return (x, y)
+        return (None, None)
 
     def get_click(self, mouse_pos):
         return self.get_cell(mouse_pos)

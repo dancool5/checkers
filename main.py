@@ -50,23 +50,23 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == pygame.BUTTON_LEFT:
             if selected_checker is None:
-                for elem in board.board:
-                    if elem.rect.collidepoint(event.pos):
-                        if elem.color == moving_color:
-                            selected_checker = elem
+                selected_checker = functions.select(event.pos, board.board, moving_color)
             else:
                 x, y = board.get_cell(event.pos)
-                if (x + y) % 2:
-                    moving_checkers = [checker for checker in board.board if checker.color == moving_color]
-                    not_moving_checkers = [checker for checker in board.board if checker.color != moving_color]
-                    if functions.can_move(selected_checker, x, y, moving_checkers, not_moving_checkers):
-                        selected_checker.make_move((x, y))
-                        selected_checker = None
-                        moving_color = 'white' if moving_color == 'black' else 'black'
-                    for checker in moving_checkers:
-                        if (checker.x, checker.y) == (x, y):
-                            selected_checker = checker
-                            break
+                if x and y:
+                    for checker in board.board:
+                        if checker.x == x and checker.y == y:
+                            if checker.color == moving_color:
+                                selected_checker = functions.select(event.pos, board.board, moving_color)
+                                break
+                            else:
+                                break
+                    else:
+                        if functions.can_move(selected_checker, x, y, moving_color):
+                            selected_checker.make_move((x, y))
+                            selected_checker = None
+                            moving_color = 'black' if moving_color == 'white' else 'white'
+
 
     clock.tick(FPS)
 

@@ -18,26 +18,18 @@ def is_killing_possible(moving_checkers, not_moving_checkers):
     return False
 
 
-def can_move(checker, x, y, moving_checkers, not_moving_checkers):
-    if not(is_killing_possible(moving_checkers, not_moving_checkers)):
-        if not(checker.is_king):
-            if checker.color == 'white':
-                if abs(checker.x - x) == 1 and y - checker.y == -1:
-                    for checker in moving_checkers + not_moving_checkers:
-                        if (checker.x, checker.y) == (x, y):
-                            return False
-                    return True
-            else:
-                if abs(checker.x - x) == 1 and y - checker.y == 1:
-                    for checker in moving_checkers + not_moving_checkers:
-                        if (checker.x, checker.y) == (x, y):
-                            return False
-                    return True
-        else:
-            if abs(checker.x - x) == abs(checker.y - y):
-                for checker in moving_checkers + not_moving_checkers:
-                    if (checker.x, checker.y) == (x, y):
-                        return False
-                return True
-    else:
-        pass
+def select(pos, board, color):
+    for checker in board:
+        if checker.rect.collidepoint(pos) and checker.color == color:
+            return checker
+    return None
+
+
+def can_move(checker, x, y, color):
+    if color == checker.color == 'white':
+        if abs(checker.x - x) == 1 and y - checker.y == -1:
+            return True
+    elif color == checker.color == 'black':
+        if abs(checker.x - x) == 1 and checker.y - y == -1:
+            return True
+    return False
