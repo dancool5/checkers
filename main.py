@@ -64,15 +64,39 @@ while running:
                         moving_ch = [ch for ch in board.board if ch.color == moving_color]
                         not_moving_ch = [ch for ch in board.board if ch.color != moving_color]
                         if functions.is_killing_possible(moving_ch, not_moving_ch, board.board):
-                            for ch in not_moving_ch:
-                                if (abs(x - ch.x) == 1 and abs(ch.y - y) == 1 and
-                                        abs(selected_checker.x - ch.x) == 1 and abs(ch.y - selected_checker.y) == 1):
-                                    killed_checker = ch
-                                    break
+                            if selected_checker.is_king:
+                                flag = False
+                                for i in range(1, abs(selected_checker.x - x)):
+                                    if x > selected_checker.x:
+                                        x_now = selected_checker.x + i
+                                    else:
+                                        x_now = selected_checker.x - i
+
+                                    if y > selected_checker.y:
+                                        y_now = selected_checker.y + i
+                                    else:
+                                        y_now = selected_checker.y - i
+
+                                    for check in not_moving_ch:
+                                        if check.x == x_now and check.y == y_now:
+                                            killed_checker = check
+                                            flag = True
+                                            break
+                                    if flag:
+                                        flag = False
+                                        break
+                                else:
+                                    killed_checker = selected_checker
+
                             else:
-                                killed_checker = selected_checker
+                                for ch in not_moving_ch:
+                                    if (abs(x - ch.x) == 1 and abs(ch.y - y) == 1 and
+                                            abs(selected_checker.x - ch.x) == 1 and abs(ch.y - selected_checker.y) == 1):
+                                        killed_checker = ch
+                                        break
+                                else:
+                                    killed_checker = selected_checker
                             if functions.can_kill(selected_checker, killed_checker, board.board):
-                                print(killed_checker)
                                 all_sprites.remove(killed_checker)
                                 board.board.remove(killed_checker)
                                 flag_king = selected_checker.make_move(x, y)
