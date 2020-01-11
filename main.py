@@ -53,10 +53,10 @@ while running:
                 selected_checker = functions.select(event.pos, board.board, moving_color)
             else:
                 x, y = board.get_cell(event.pos)
-                if x and y:
-                    for checker in board.board:
-                        if checker.x == x and checker.y == y:
-                            if checker.color == moving_color:
+                if x != None:
+                    for ch in board.board:
+                        if ch.x == x and ch.y == y:
+                            if ch.color == moving_color:
                                 selected_checker = functions.select(event.pos, board.board, moving_color)
                                 break
                             else:
@@ -66,6 +66,15 @@ while running:
                             selected_checker.make_move((x, y))
                             selected_checker = None
                             moving_color = 'black' if moving_color == 'white' else 'white'
+                        else:
+                            killed_checker = functions.can_kill(selected_checker, x, y, moving_color, board.board)
+                            if killed_checker:
+                                print(killed_checker.x, killed_checker.y)
+                                all_sprites.remove(killed_checker)
+                                board.board.remove(killed_checker)
+                                selected_checker.make_move((x, y))
+                                selected_checker = None
+                                moving_color = 'black' if moving_color == 'white' else 'white'
 
 
     clock.tick(FPS)

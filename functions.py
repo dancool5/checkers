@@ -1,13 +1,9 @@
-def can_kill(checker1, checker2, all_checkers):
-    if 2 * checker1.x - checker2.x not in [checker.x for checker in all_checkers] + [0, 7] or \
-            2 * checker1.y - checker2.y not in [checker.y for checker in all_checkers] + [0, 7]:
-        if not(checker1.is_king):
-            if abs(checker1.x - checker2.x) == abs(checker1.y - checker2.y) == 1:
-                    return True
-        else:
-            if abs(checker1.x - checker2.x) == abs(checker1.y - checker2.y):
-                    return True
-    return False
+def can_kill(checker, x, y, color, all_checkers):
+    if color == checker.color and abs(checker.x - x) == 2 and abs(checker.y - y) == 2:
+        for ch in all_checkers:
+            if ch.color != color and abs(ch.x - checker.x) == 1 and abs(ch.y - checker.y) == 1:
+                return ch
+    return None
 
 
 def is_killing_possible(moving_checkers, not_moving_checkers):
@@ -18,8 +14,8 @@ def is_killing_possible(moving_checkers, not_moving_checkers):
     return False
 
 
-def select(pos, board, color):
-    for checker in board:
+def select(pos, all_checkers, color):
+    for checker in all_checkers:
         if checker.rect.collidepoint(pos) and checker.color == color:
             return checker
     return None

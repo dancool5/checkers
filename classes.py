@@ -74,7 +74,7 @@ class Board:
         x, y = mouse_pos
         x = (x - self.left) // self.cell_length
         y = (y - self.top) // self.cell_length
-        if 0 <= x < self.rows and 0 <= y < self.lines:
+        if 0 <= x < self.rows + 1 and 0 <= y < self.lines + 1:
             return (x, y)
         return (None, None)
 
