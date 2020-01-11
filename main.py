@@ -1,13 +1,6 @@
 import pygame
-from os import path
 from classes import Board, Checker
 import functions
-
-
-def load_image(name):
-    fullname = path.join('data', name)
-    im = pygame.image.load(fullname).convert_alpha()
-    return im
 
 
 pygame.init()
@@ -15,7 +8,7 @@ pygame.display.set_caption('Checkers')
 width, height = 532, 532
 size = (width, height)
 screen = pygame.display.set_mode(size)
-pygame.display.set_icon(pygame.transform.scale(load_image('icon.ico'), (32, 32)))
+pygame.display.set_icon(pygame.transform.scale(functions.load_image('icon.ico'), (32, 32)))
 FPS = 30
 clock = pygame.time.Clock()
 running = True
@@ -30,14 +23,14 @@ board = Board(left, top, cell_length, lines, rows)
 # добавление шашек на доску
 for row in range(5, 8):
     for col in range((row + 1) % 2, 8, 2):
-        image = pygame.transform.scale(load_image('white_checker.png'), (cell_length, cell_length))
+        image = pygame.transform.scale(functions.load_image('white_checker.png'), (cell_length, cell_length))
         checker = Checker(col, row, 'white', all_sprites, image, left, top,
                           cell_length, lines, rows)
         board.board.append(checker)
 
 for row in range(0, 3):
     for col in range((row + 1) % 2, 8, 2):
-        image = pygame.transform.scale(load_image('black_checker.png'), (cell_length, cell_length))
+        image = pygame.transform.scale(functions.load_image('black_checker.png'), (cell_length, cell_length))
         checker = Checker(col, row, 'black', all_sprites, image, left, top,
                           cell_length, lines, rows)
         board.board.append(checker)
@@ -96,9 +89,10 @@ while running:
 
                                 if flag_king:
                                     functions.change_status(selected_checker,
-                                                            [pygame.transform.scale(load_image('white_king.png'),
-                                                                                    (cell_length, cell_length)),
-                                                             pygame.transform.scale(load_image('black_king.png'),
+                                                            [pygame.transform.scale(
+                                                                functions.load_image('white_king.png'),
+                                                                (cell_length, cell_length)),
+                                                             pygame.transform.scale(functions.load_image('black_king.png'),
                                                                                     (cell_length, cell_length))])
 
                                 not_moving_ch = [ch for ch in board.board if ch.color != moving_color]
@@ -111,10 +105,12 @@ while running:
                             if flag_king:
                                 if flag_king:
                                     functions.change_status(selected_checker,
-                                                            [pygame.transform.scale(load_image('white_king.png'),
-                                                                                    (cell_length, cell_length)),
-                                                             pygame.transform.scale(load_image('black_king.png'),
-                                                                                    (cell_length, cell_length))])
+                                                            [pygame.transform.scale(
+                                                                functions.load_image('white_king.png'),
+                                                                (cell_length, cell_length)),
+                                                             pygame.transform.scale(
+                                                                 functions.load_image('black_king.png'),
+                                                                 (cell_length, cell_length))])
 
                             selected_checker = None
                             moving_color = 'black' if moving_color == 'white' else 'white'

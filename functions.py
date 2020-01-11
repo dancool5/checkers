@@ -1,3 +1,7 @@
+from os import path
+import pygame
+
+
 def can_kill(checker1, checker2, all_checkers):
     if not checker1.is_king:
         if checker1.x - checker2.x < 0:
@@ -130,3 +134,9 @@ def special_check(x1, y1, x2, y2, all_checkers):  # эта функция нуж
     if len(ch) == 0:
         return None
     return ch
+
+
+def load_image(name):
+    fullname = path.join('data', name)
+    im = pygame.image.load(fullname).convert_alpha()
+    return im
