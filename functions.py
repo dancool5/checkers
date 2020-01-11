@@ -22,19 +22,39 @@ def can_kill(checker1, checker2, all_checkers):
     else:
         if abs(checker1.x - checker2.x) != abs(checker1.y - checker2.y):
             return False
-        if checker2.x > checker1.x:
-            x = checker1.x + 1
-        else:
-            x = checker1.x - 1
 
-        if checker2.y > checker1.y:
-            y = checker1.y + 1
+        for i in range(1, abs(checker2.x - checker1.x)):
+            if checker2.x > checker1.x:
+                x = checker1.x + i
+            else:
+                x = checker1.x - i
+
+            if checker2.y > checker1.y:
+                y = checker1.y + i
+            else:
+                y = checker1.y - i
+
+            for check in all_checkers:
+                if check.x == x and check.y == y:
+                    return False
+
+        if checker1.x > checker2.x:
+            x = checker2.x - 1
         else:
-            y = checker1.y - 1
+            x = checker2.x + 1
+
+        if checker1.y > checker2.y:
+            y = checker2.y - 1
+        else:
+            y = checker2.y + 1
+
+        if x in (-1, 8) or y in (-1, 8):
+            return False
 
         for check in all_checkers:
             if check.x == x and check.y == y:
                 return False
+
         return True
 
 
