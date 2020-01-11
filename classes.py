@@ -2,11 +2,6 @@ import pygame
 
 
 class Checker(pygame.sprite.Sprite):
-    # b_checker = load_image('black_checker.png')
-    # b_king = load_image('black_king.png')
-    # w_checker = load_image('white_checker.png')
-    # w_king = load_image('black_king.png')
-
     def __init__(self, x, y, color, all_sprites, image, left, top, cell_length, lines, rows):
         super().__init__(all_sprites)
 

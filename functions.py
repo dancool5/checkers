@@ -2,7 +2,13 @@ from os import path
 import pygame
 
 
-def can_kill(checker1, checker2, all_checkers):
+def can_kill(checker1, checker2, all_checkers, x, y):
+    if type(special_check(checker1.x, checker1.y, x, y, all_checkers)) == list:
+        return False
+
+    if abs(x - checker1.x) != abs(y - checker1.y):
+        return False
+
     if not checker1.is_king:
         if checker1.x - checker2.x < 0:
             if checker1.x + 2 > 7:
@@ -59,9 +65,16 @@ def is_killing_possible(moving_checkers, not_moving_checkers, all_checkers):
 
 
 def select(pos, all_checkers, color):
+    x, y = pos[0], pos[1]
+    if not(x and y):
+        return None
+    if x % 2 == y % 2:
+        return None
     for checker in all_checkers:
-        if checker.rect.collidepoint(pos) and checker.color == color:
-            return checker
+        if checker.rect.collidepoint(pos):
+            if checker.color == color:
+                return checker
+            return 'false_color'
     return None
 
 
@@ -140,3 +153,30 @@ def load_image(name):
     fullname = path.join('data', name)
     im = pygame.image.load(fullname).convert_alpha()
     return im
+
+
+def sel_other(x, y, all_checker, color, pos):
+    if x is not None:
+        for ch in all_checker:
+            if ch.x == x and ch.y == y:
+                return select(pos, all_checker, color)
+    return None
+
+
+def find_killed_checker(sel_checker, all_checkers, x, y, not_moving_ch):
+    if sel_checker.is_king:
+        killed_checker = special_check(sel_checker.x, sel_checker.y, x, y, all_checkers)
+        if not killed_checker:
+            killed_checker = sel_checker
+        elif type(killed_checker) == list:
+            killed_checker = killed_checker[0]
+    else:
+        for ch in not_moving_ch:
+            if (abs(x - ch.x) == 1 and abs(ch.y - y) == 1 and
+                    abs(sel_checker.x - ch.x) == 1 and
+                    abs(ch.y - sel_checker.y) == 1):
+                killed_checker = ch
+                break
+        else:
+            killed_checker = sel_checker
+    return killed_checker
