@@ -23,20 +23,8 @@ def can_kill(checker1, checker2, all_checkers):
         if abs(checker1.x - checker2.x) != abs(checker1.y - checker2.y):
             return False
 
-        for i in range(1, abs(checker2.x - checker1.x)):
-            if checker2.x > checker1.x:
-                x = checker1.x + i
-            else:
-                x = checker1.x - i
-
-            if checker2.y > checker1.y:
-                y = checker1.y + i
-            else:
-                y = checker1.y - i
-
-            for check in all_checkers:
-                if check.x == x and check.y == y:
-                    return False
+        if special_check(checker1.x, checker1.y, checker2.x, checker2.y, all_checkers):
+            return False
 
         if checker1.x > checker2.x:
             x = checker2.x - 1
@@ -73,26 +61,33 @@ def select(pos, all_checkers, color):
     return None
 
 
-def can_move(checker, x, y, color):
-    if checker.x - x > 0:
-        if checker.x - 1 < 0:
+def can_move(checker, x, y, color, all_checkers):
+    if checker.is_king:
+        if abs(checker.x - x) != abs(checker.y - y):
             return False
-    elif checker.x + 1 > 7:
-        return False
-
-    if checker.y - y > 0:
-        if checker.y - 1 < 0:
+        if type(special_check(checker.x, checker.y, x, y, all_checkers)) == int:
             return False
-    elif checker.y + 1 > 7:
-        return False
+        return True
+    else:
+        if checker.x - x > 0:
+            if checker.x - 1 < 0:
+                return False
+        elif checker.x + 1 > 7:
+            return False
 
-    if color == checker.color == 'white':
-        if abs(checker.x - x) == 1 and y - checker.y == -1:
-            return True
-    elif color == checker.color == 'black':
-        if abs(checker.x - x) == 1 and checker.y - y == -1:
-            return True
-    return False
+        if checker.y - y > 0:
+            if checker.y - 1 < 0:
+                return False
+        elif checker.y + 1 > 7:
+            return False
+
+        if color == checker.color == 'white':
+            if abs(checker.x - x) == 1 and y - checker.y == -1:
+                return True
+        elif color == checker.color == 'black':
+            if abs(checker.x - x) == 1 and checker.y - y == -1:
+                return True
+        return False
 
 
 def check_winning(all_checkers):
@@ -112,3 +107,27 @@ def change_status(checker, images):
         checker.image = w_image
     else:
         checker.image = b_image
+
+
+def special_check(x1, y1, x2, y2, all_checkers):  # эта функция нужна для проверки
+    ch = []
+    for i in range(1, abs(x1 - x2)):  # есть ли между двумя клетками по диагонали другие шашки
+        if x2 > x1:
+            x = x1 + i
+        else:
+            x = x1 - i
+
+        if y2 > y1:
+            y = y1 + i
+        else:
+            y = y1 - i
+
+        for check in all_checkers:
+            if check.x == x and check.y == y:
+                ch.append(check)
+    if len(ch) == 1:
+        return ch[0]
+    if len(ch) == 0:
+        return None
+    return ch
+

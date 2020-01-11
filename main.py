@@ -52,6 +52,9 @@ while running:
                 selected_checker = functions.select(event.pos, board.board, moving_color)
             else:
                 x, y = board.get_cell(event.pos)
+                if x and y:
+                    if x % 2 == y % 2:
+                        x = None
                 if x is not None:
                     for ch in board.board:
                         if ch.x == x and ch.y == y:
@@ -66,28 +69,12 @@ while running:
                         if functions.is_killing_possible(moving_ch, not_moving_ch, board.board):
                             if selected_checker.is_king:
                                 flag = False
-                                for i in range(1, abs(selected_checker.x - x)):
-                                    if x > selected_checker.x:
-                                        x_now = selected_checker.x + i
-                                    else:
-                                        x_now = selected_checker.x - i
-
-                                    if y > selected_checker.y:
-                                        y_now = selected_checker.y + i
-                                    else:
-                                        y_now = selected_checker.y - i
-
-                                    for check in not_moving_ch:
-                                        if check.x == x_now and check.y == y_now:
-                                            killed_checker = check
-                                            flag = True
-                                            break
-                                    if flag:
-                                        flag = False
-                                        break
-                                else:
+                                killed_checker = functions.special_check(selected_checker.x, selected_checker.y,
+                                                                         x, y, board.board)
+                                if not killed_checker:
                                     killed_checker = selected_checker
-
+                                elif type(killed_checker) == list:
+                                    killed_checker = killed_checker[0]
                             else:
                                 for ch in not_moving_ch:
                                     if (abs(x - ch.x) == 1 and abs(ch.y - y) == 1 and
@@ -96,7 +83,11 @@ while running:
                                         break
                                 else:
                                     killed_checker = selected_checker
-                            if functions.can_kill(selected_checker, killed_checker, board.board):
+                            if (functions.can_kill(selected_checker, killed_checker, board.board) and
+                                type(functions.special_check(selected_checker.x, selected_checker.y, x, y,
+                                                             board.board)) != list and
+                                abs(x - selected_checker.x) == abs(y - selected_checker.y)):
+                                print(selected_checker.x, selected_checker.y, killed_checker.x, killed_checker.y, x, y)
                                 all_sprites.remove(killed_checker)
                                 board.board.remove(killed_checker)
                                 flag_king = selected_checker.make_move(x, y)
@@ -112,9 +103,7 @@ while running:
                                 if not(functions.is_killing_possible([selected_checker], not_moving_ch, board.board)):
                                     moving_color = 'black' if moving_color == 'white' else 'white'
                                     selected_checker = None
-                                else:
-                                    print(1)
-                        elif functions.can_move(selected_checker, x, y, moving_color):
+                        elif functions.can_move(selected_checker, x, y, moving_color, board.board):
                             flag_king = selected_checker.make_move(x, y)
 
                             if flag_king:
