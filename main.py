@@ -78,7 +78,8 @@ while running:
                             else:
                                 for ch in not_moving_ch:
                                     if (abs(x - ch.x) == 1 and abs(ch.y - y) == 1 and
-                                            abs(selected_checker.x - ch.x) == 1 and abs(ch.y - selected_checker.y) == 1):
+                                            abs(selected_checker.x - ch.x) == 1 and
+                                            abs(ch.y - selected_checker.y) == 1):
                                         killed_checker = ch
                                         break
                                 else:
