@@ -130,4 +130,3 @@ def special_check(x1, y1, x2, y2, all_checkers):  # эта функция нуж
     if len(ch) == 0:
         return None
     return ch
-

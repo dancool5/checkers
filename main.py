@@ -11,9 +11,11 @@ def load_image(name):
 
 
 pygame.init()
+pygame.display.set_caption('Checkers')
 width, height = 532, 532
 size = (width, height)
 screen = pygame.display.set_mode(size)
+pygame.display.set_icon(pygame.transform.scale(load_image('icon.ico'), (32, 32)))
 FPS = 30
 clock = pygame.time.Clock()
 running = True
@@ -88,7 +90,6 @@ while running:
                                 type(functions.special_check(selected_checker.x, selected_checker.y, x, y,
                                                              board.board)) != list and
                                 abs(x - selected_checker.x) == abs(y - selected_checker.y)):
-                                print(selected_checker.x, selected_checker.y, killed_checker.x, killed_checker.y, x, y)
                                 all_sprites.remove(killed_checker)
                                 board.board.remove(killed_checker)
                                 flag_king = selected_checker.make_move(x, y)
