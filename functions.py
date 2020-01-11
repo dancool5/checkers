@@ -59,9 +59,18 @@ def can_move(checker, x, y, color):
 
 def check_winning(all_checkers):
     color = 'black'
-    if [1 for check in all_checkers if check.color == color] == []:
+    if not [1 for check in all_checkers if check.color == color]:
         return 'White wins'
     color = 'white'
-    if [1 for check in all_checkers if check.color == color] == []:
+    if not [1 for check in all_checkers if check.color == color]:
         return 'Black wins'
     return None
+
+
+def change_status(checker, images):
+    checker.is_king = True
+    w_image, b_image = images[0], images[1]
+    if checker.color == 'white':
+        checker.image = w_image
+    else:
+        checker.image = 'black'

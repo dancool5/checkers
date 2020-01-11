@@ -75,7 +75,15 @@ while running:
                                 print(killed_checker)
                                 all_sprites.remove(killed_checker)
                                 board.board.remove(killed_checker)
-                                selected_checker.make_move(x, y)
+                                flag_king = selected_checker.make_move(x, y)
+
+                                if flag_king:
+                                    functions.change_status(selected_checker,
+                                                            [pygame.transform.scale(load_image('white_king.png'),
+                                                                                    (cell_length, cell_length)),
+                                                             pygame.transform.scale(load_image('black_king.png'),
+                                                                                    (cell_length, cell_length))])
+
                                 not_moving_ch = [ch for ch in board.board if ch.color != moving_color]
                                 if not(functions.is_killing_possible([selected_checker], not_moving_ch, board.board)):
                                     moving_color = 'black' if moving_color == 'white' else 'white'
@@ -83,7 +91,16 @@ while running:
                                 else:
                                     print(1)
                         elif functions.can_move(selected_checker, x, y, moving_color):
-                            selected_checker.make_move(x, y)
+                            flag_king = selected_checker.make_move(x, y)
+
+                            if flag_king:
+                                if flag_king:
+                                    functions.change_status(selected_checker,
+                                                            [pygame.transform.scale(load_image('white_king.png'),
+                                                                                    (cell_length, cell_length)),
+                                                             pygame.transform.scale(load_image('black_king.png'),
+                                                                                    (cell_length, cell_length))])
+
                             selected_checker = None
                             moving_color = 'black' if moving_color == 'white' else 'white'
 
