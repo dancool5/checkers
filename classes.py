@@ -14,7 +14,7 @@ class Checker(pygame.sprite.Sprite):
 
         self.x, self.y = x, y
         self.rect = self.image.get_rect()
-        self.rect.x = top + x * cell_length
+        self.rect.x = left + x * cell_length
         self.rect.y = top + y * cell_length
 
         self.is_king = False
@@ -45,7 +45,7 @@ class Board:
                 self.render_cell(i, j, screen, selected_checker)
 
     def render_cell(self, row, col, screen, selected_checker):
-        rect = (row * self.cell_length + self.left, col * self.cell_length + self.top,
+        rect = (col * self.cell_length + self.left, row * self.cell_length + self.top,
                 self.cell_length, self.cell_length)
         color = None
         if selected_checker:

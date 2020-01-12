@@ -4,18 +4,27 @@ import functions
 
 
 pygame.init()
-pygame.display.set_caption('Checkers')
-width, height = 1024, 1024
+
+width, height = 800, 800
+left, right, bottom, top = 200, 10, 10, 10  # границы рамки
+lines, rows = 8, 8
+# корректировка размеров экрана
+if left > top:
+    cell_length = (width - left - right) // lines
+    height = cell_length * rows + top + bottom
+else:
+    cell_length = (width - top - bottom) // lines
+    width = cell_length * lines + left + right
+
 size = (width, height)
 screen = pygame.display.set_mode(size)
+
+pygame.display.set_caption('Checkers')
 pygame.display.set_icon(pygame.transform.scale(functions.load_image('icon.ico'), (32, 32)))
+
 FPS = 30
 clock = pygame.time.Clock()
 running = True
-
-left, top = 10, 10  # границы рамки
-cell_length = (width - left * 2) // 8
-lines, rows = 8, 8
 
 all_sprites = pygame.sprite.Group()
 board = Board(left, top, cell_length, lines, rows)
@@ -100,6 +109,10 @@ while running:
     screen.fill(pygame.Color('black'))
     board.render(screen, selected_checker)
     all_sprites.draw(screen)
+    font = pygame.font.Font(None, (left - left // 20) // 5)
+    str_turn = 'Ход: черных' if moving_color == 'black' else 'Ход: белых'
+    text_turn = font.render(str_turn, 1, (255, 255, 255))
+    screen.blit(text_turn, (left // 20, top))
     pygame.display.flip()
 
 pygame.quit()
