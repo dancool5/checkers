@@ -2,38 +2,36 @@ from os import path
 import pygame
 
 
-def can_kill(checker1, checker2, all_checkers, x, y):
-    if type(special_check(checker1.x, checker1.y, x, y, all_checkers)) == list:
-        return False
-
-    if abs(x - checker1.x) != abs(y - checker1.y):
-        return False
-
+def can_kill(checker1, checker2, all_checkers, x, y, flag):
     if not checker1.is_king:
-        if checker1.x - checker2.x < 0:
-            if checker1.x + 2 > 7:
-                return False
-        elif checker1.x - 2 < 0:
+        if (checker1.x - checker2.x < 0 and checker1.x + 2 > 7) or (checker1.x - 2 < 0 and checker1.x - checker2.x > 0):
             return False
 
-        if checker1.y - checker2.y < 0:
-            if checker1.y + 2 > 7:
-                return False
-        elif checker1.y - 2 < 0:
+        if (checker1.y - checker2.y < 0 and checker1.y + 2 > 7) or (checker1.y - checker2.y > 0 and checker1.y - 2 < 0):
             return False
 
         if abs(checker1.x - checker2.x) != 1 or abs(checker1.y - checker2.y) != 1:
             return False
 
+        x_now, y_now = 2 * (checker2.x - checker1.x) + checker1.x, 2 * (checker2.y - checker1.y) + checker1.y
         for ch in all_checkers:
-            if checker2.x - checker1.x == ch.x - checker2.x and ch.y - checker2.y == checker2.y - checker1.y:
+            if ch.x == x_now and ch.y == y_now:
                 return False
         return True
     else:
-        if abs(checker1.x - checker2.x) != abs(checker1.y - checker2.y):
+        if flag:
+            # это условие проверяется в случае, если нужно рассмотреть конкретную
+            # ситуацию с рубкой, котороую выделил сам игрок
+            checking = special_check(checker1.x, checker1.y, x, y, all_checkers)
+            print(checking)
+            if checking is None or type(checking) is list:
+                print(special_check(checker1.x, checker1.y, x, y, all_checkers))
+                return False
+
+        if special_check(checker1.x, checker1.y, checker2.x, checker2.y, all_checkers) is not None:
             return False
 
-        if special_check(checker1.x, checker1.y, checker2.x, checker2.y, all_checkers):
+        if abs(checker2.x - checker1.x) != abs(checker2.y - checker1.y):
             return False
 
         if checker1.x > checker2.x:
@@ -59,31 +57,21 @@ def can_kill(checker1, checker2, all_checkers, x, y):
 def is_killing_possible(moving_checkers, not_moving_checkers, all_checkers):
     for checker1 in moving_checkers:
         for checker2 in not_moving_checkers:
-            if can_kill(checker1, checker2, all_checkers):
+            if can_kill(checker1, checker2, all_checkers, None, None, False):
                 return True
     return False
 
 
-def select(pos, all_checkers, color):
-    x, y = pos[0], pos[1]
-    if not(x and y):
-        return None
-    if x % 2 == y % 2:
-        return None
-    for checker in all_checkers:
-        if checker.rect.collidepoint(pos):
-            if checker.color == color:
-                return checker
-            return 'false_color'
-    return None
-
-
 def can_move(checker, x, y, color, all_checkers):
+    if x % 2 == y % 2:
+        return False
     if checker.is_king:
         if abs(checker.x - x) != abs(checker.y - y):
             return False
-        if type(special_check(checker.x, checker.y, x, y, all_checkers)) == int:
+
+        if special_check(checker.x, checker.y, x, y, all_checkers) is not None:
             return False
+
         return True
     else:
         if checker.x - x > 0:
@@ -126,9 +114,10 @@ def change_status(checker, images):
         checker.image = b_image
 
 
-def special_check(x1, y1, x2, y2, all_checkers):  # эта функция нужна для проверки
+def special_check(x1, y1, x2, y2, all_checkers):
+    # эта функция нужна для проверки есть ли между двумя клетками по диагонали другие шашки
     ch = []
-    for i in range(1, abs(x1 - x2)):  # есть ли между двумя клетками по диагонали другие шашки
+    for i in range(1, abs(x1 - x2)):
         if x2 > x1:
             x = x1 + i
         else:
@@ -142,6 +131,7 @@ def special_check(x1, y1, x2, y2, all_checkers):  # эта функция нуж
         for check in all_checkers:
             if check.x == x and check.y == y:
                 ch.append(check)
+
     if len(ch) == 1:
         return ch[0]
     if len(ch) == 0:
@@ -155,11 +145,15 @@ def load_image(name):
     return im
 
 
-def sel_other(x, y, all_checker, color, pos):
+def select(x, y, all_checker, color, pos):
     if x is not None:
-        for ch in all_checker:
-            if ch.x == x and ch.y == y:
-                return select(pos, all_checker, color)
+        if x % 2 != y % 2:
+            for checker in all_checker:
+                if checker.rect.collidepoint(pos):
+                    if checker.color == color:
+                        return checker
+                    else:
+                        return 'false_color'
     return None
 
 
@@ -172,8 +166,7 @@ def find_killed_checker(sel_checker, all_checkers, x, y, not_moving_ch):
             killed_checker = killed_checker[0]
     else:
         for ch in not_moving_ch:
-            if (abs(x - ch.x) == 1 and abs(ch.y - y) == 1 and
-                    abs(sel_checker.x - ch.x) == 1 and
+            if (abs(x - ch.x) == 1 and abs(ch.y - y) == 1 and abs(sel_checker.x - ch.x) == 1 and
                     abs(ch.y - sel_checker.y) == 1):
                 killed_checker = ch
                 break

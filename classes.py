@@ -71,9 +71,6 @@ class Board:
         x, y = mouse_pos
         x = (x - self.left) // self.cell_length
         y = (y - self.top) // self.cell_length
-        if 0 <= x < self.rows + 1 and 0 <= y < self.lines + 1:
-            return (x, y)
+        if 0 <= x <= self.rows and 0 <= y <= self.lines:
+            return x, y
         return None, None
-
-    def get_click(self, mouse_pos):
-        return self.get_cell(mouse_pos)
