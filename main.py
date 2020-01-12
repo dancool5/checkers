@@ -70,8 +70,6 @@ while running:
                     # если есть ходы c рубкой
                     killed_checker = functions.find_killed_checker(selected_checker,
                                                                    board.board, x, y, not_moving_ch)
-                    print(functions.find_killed_checker(selected_checker, board.board, x, y, not_moving_ch))
-                    print(functions.can_kill(selected_checker, killed_checker, board.board, x, y, True))
                     if functions.can_kill(selected_checker, killed_checker, board.board, x, y, True):
                         # если данная рубка возможна
                         print(2)
@@ -99,7 +97,7 @@ while running:
                     moving_color = 'black' if moving_color == 'white' else 'white'
 
     # проверка на конец игры
-    win_text = functions.check_winning(board.board)
+    win_text, black_ch, white_ch = functions.check_winning(board.board)
     if win_text:
         running = False
         print(win_text)
@@ -109,10 +107,17 @@ while running:
     screen.fill(pygame.Color('black'))
     board.render(screen, selected_checker)
     all_sprites.draw(screen)
+
     font = pygame.font.Font(None, (left - left // 20) // 5)
     str_turn = 'Ход: черных' if moving_color == 'black' else 'Ход: белых'
+    str_black_count, srt_white_count = str(len(black_ch)) + ' ч шашек', str(len(white_ch)) + ' б шашек'
     text_turn = font.render(str_turn, 1, (255, 255, 255))
+    text_white_count = font.render(srt_white_count, 1, (255, 255, 255))
+    text_black_count = font.render(str_black_count, 1, (255, 255, 255))
     screen.blit(text_turn, (left // 20, top))
+    screen.blit(text_white_count, (left // 20, top + (left - left // 20) // 5))
+    screen.blit(text_black_count, (left // 20, top + 2 * (left - left // 20) // 5))
+
     pygame.display.flip()
 
 pygame.quit()

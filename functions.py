@@ -96,13 +96,13 @@ def can_move(checker, x, y, color, all_checkers):
 
 
 def check_winning(all_checkers):
-    color = 'black'
-    if not [1 for check in all_checkers if check.color == color]:
-        return 'White wins'
-    color = 'white'
-    if not [1 for check in all_checkers if check.color == color]:
-        return 'Black wins'
-    return None
+    black_ch = [checker for checker in all_checkers if checker.color == 'black']
+    white_ch = [checker for checker in all_checkers if checker.color == 'white']
+    if len(black_ch) == 0:
+        return 'White wins', black_ch, white_ch
+    if len(white_ch) == 0:
+        return 'Black wins', black_ch, white_ch
+    return None, black_ch, white_ch
 
 
 def change_status(checker, images):
