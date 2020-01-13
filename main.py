@@ -26,6 +26,8 @@ FPS = 30
 clock = pygame.time.Clock()
 running = True
 
+font = pygame.font.Font(None, (left - left // 20) // 5)
+
 all_sprites = pygame.sprite.Group()
 board = Board(left, top, cell_length, lines, cols)
 
@@ -84,7 +86,7 @@ while running:
                         if not(functions.is_killing_possible([selected_checker], not_moving_ch, board.board)):
                             # если повторная рубка невозможна, то меняем ход
                             moving_color = 'black' if moving_color == 'white' else 'white'
-                            board.rotate()
+                            # board.rotate()
                             selected_checker = None
 
                 elif functions.can_move(selected_checker, x, y, moving_color, board):
@@ -96,7 +98,7 @@ while running:
 
                     selected_checker = None
                     moving_color = 'black' if moving_color == 'white' else 'white'
-                    board.rotate()
+                    # board.rotate()
 
     # проверка на конец игры
     win_text, black_ch, white_ch = functions.check_winning(board.board)
@@ -109,8 +111,6 @@ while running:
     screen.fill(pygame.Color('black'))
     board.render(screen, selected_checker)
     all_sprites.draw(screen)
-
-    font = pygame.font.Font(None, (left - left // 20) // 5)
 
     str_turn = 'Ход: черных' if moving_color == 'black' else 'Ход: белых'
     text_turn = font.render(str_turn, 1, (255, 255, 255))
