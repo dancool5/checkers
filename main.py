@@ -109,14 +109,18 @@ while running:
     all_sprites.draw(screen)
 
     font = pygame.font.Font(None, (left - left // 20) // 5)
+
     str_turn = 'Ход: черных' if moving_color == 'black' else 'Ход: белых'
-    str_black_count, srt_white_count = str(len(black_ch)) + ' ч шашек', str(len(white_ch)) + ' б шашек'
     text_turn = font.render(str_turn, 1, (255, 255, 255))
-    text_white_count = font.render(srt_white_count, 1, (255, 255, 255))
-    text_black_count = font.render(str_black_count, 1, (255, 255, 255))
     screen.blit(text_turn, (left // 20, top))
-    screen.blit(text_white_count, (left // 20, top + (left - left // 20) // 5))
-    screen.blit(text_black_count, (left // 20, top + 2 * (left - left // 20) // 5))
+
+    srt_white_count = str(len(white_ch)) + ' б шашек'
+    text_white_count = font.render(srt_white_count, 1, (255, 255, 255))
+    screen.blit(text_white_count, (left // 20, height - 2 * (left - left // 20) // 5))
+
+    str_black_count = str(len(black_ch)) + ' ч шашек'
+    text_black_count = font.render(str_black_count, 1, (255, 255, 255))
+    screen.blit(text_black_count, (left // 20, height - (left - left // 20) // 5))
 
     pygame.display.flip()
 

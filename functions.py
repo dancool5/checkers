@@ -20,12 +20,13 @@ def can_kill(checker1, checker2, all_checkers, x, y, flag):
         return True
     else:
         if flag:
-            # это условие проверяется в случае, если нужно рассмотреть конкретную
+            # эти условия проверяются в случае, если нужно рассмотреть конкретную
             # ситуацию с рубкой, котороую выделил сам игрок
             checking = special_check(checker1.x, checker1.y, x, y, all_checkers)
-            print(checking)
             if checking is None or type(checking) is list:
-                print(special_check(checker1.x, checker1.y, x, y, all_checkers))
+                return False
+
+            if abs(checker1.x - x) != abs(checker1.y - y):
                 return False
 
         if special_check(checker1.x, checker1.y, checker2.x, checker2.y, all_checkers) is not None:
