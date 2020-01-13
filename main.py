@@ -50,7 +50,6 @@ for line in range(0, 3):
 moving_color = 'white'
 selected_checker = None
 
-board.rotate()
 
 while running:
     for event in pygame.event.get():
@@ -85,6 +84,7 @@ while running:
                         if not(functions.is_killing_possible([selected_checker], not_moving_ch, board.board)):
                             # если повторная рубка невозможна, то меняем ход
                             moving_color = 'black' if moving_color == 'white' else 'white'
+                            board.rotate()
                             selected_checker = None
 
                 elif functions.can_move(selected_checker, x, y, moving_color, board):
@@ -96,6 +96,7 @@ while running:
 
                     selected_checker = None
                     moving_color = 'black' if moving_color == 'white' else 'white'
+                    board.rotate()
 
     # проверка на конец игры
     win_text, black_ch, white_ch = functions.check_winning(board.board)

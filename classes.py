@@ -27,7 +27,8 @@ class Checker(pygame.sprite.Sprite):
         if is_rotate:
             if (self.color == 'white' and self.y == 7) or (self.y == 0 and self.color == 'black'):
                 return True
-            elif (self.color == 'white' and self.y == 0) or (self.y == 7 and self.color == 'black'):
+        else:
+            if (self.color == 'white' and self.y == 0) or (self.y == 7 and self.color == 'black'):
                 return True
 
         return False
@@ -82,7 +83,16 @@ class Board:
         return None, None
 
     def rotate(self):
+        images = []
         for checker in self.board:
+            images.append(checker.image)
+            checker.image = None
+
+        pygame.time.wait(250)
+
+        for checker in self.board:
+            checker.image = images[0]
+            del images[0]
             checker.make_move(self.lines - checker.x - 1, self.cols - checker.y - 1, True)
 
         self.is_rotate = not self.is_rotate
