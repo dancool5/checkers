@@ -7,11 +7,11 @@ pygame.init()
 
 width, height = 800, 800
 left, right, bottom, top = 200, 10, 10, 10  # границы рамки
-lines, rows = 8, 8
+lines, cols = 8, 8
 # корректировка размеров экрана
 if left > top:
     cell_length = (width - left - right) // lines
-    height = cell_length * rows + top + bottom
+    height = cell_length * cols + top + bottom
 else:
     cell_length = (width - top - bottom) // lines
     width = cell_length * lines + left + right
@@ -27,7 +27,7 @@ clock = pygame.time.Clock()
 running = True
 
 all_sprites = pygame.sprite.Group()
-board = Board(left, top, cell_length, lines, rows)
+board = Board(left, top, cell_length, lines, cols)
 
 im_w_ch = pygame.transform.scale(functions.load_image('white_checker.png'), (cell_length, cell_length))
 im_w_k = pygame.transform.scale(functions.load_image('white_king.png'), (cell_length, cell_length))
@@ -35,20 +35,22 @@ im_b_ch = pygame.transform.scale(functions.load_image('black_checker.png'), (cel
 im_b_k = pygame.transform.scale(functions.load_image('black_king.png'), (cell_length, cell_length))
 
 # добавление шашек на доску
-for row in range(5, 8):
-    for col in range((row + 1) % 2, 8, 2):
-        checker = Checker(col, row, 'white', all_sprites, im_w_ch, left, top,
-                          cell_length, lines, rows)
+for line in range(lines - 3, lines):
+    for col in range((line + 1) % 2, 8, 2):
+        checker = Checker(col, line, 'white', all_sprites, im_w_ch, left, top,
+                          cell_length, lines, cols)
         board.board.append(checker)
 
-for row in range(0, 3):
-    for col in range((row + 1) % 2, 8, 2):
-        checker = Checker(col, row, 'black', all_sprites, im_b_ch, left, top,
-                          cell_length, lines, rows)
+for line in range(0, 3):
+    for col in range((line + 1) % 2, 8, 2):
+        checker = Checker(col, line, 'black', all_sprites, im_b_ch, left, top,
+                          cell_length, lines, cols)
         board.board.append(checker)
 
 moving_color = 'white'
 selected_checker = None
+
+board.rotate()
 
 while running:
     for event in pygame.event.get():
@@ -72,10 +74,9 @@ while running:
                                                                    board.board, x, y, not_moving_ch)
                     if functions.can_kill(selected_checker, killed_checker, board.board, x, y, True):
                         # если данная рубка возможна
-                        print(2)
                         board.board.remove(killed_checker)
                         all_sprites.remove(killed_checker)
-                        flag_king = selected_checker.make_move(x, y)
+                        flag_king = selected_checker.make_move(x, y, board.is_rotate)
 
                         if flag_king:
                             functions.change_status(selected_checker, [im_w_k, im_b_k])
@@ -86,9 +87,9 @@ while running:
                             moving_color = 'black' if moving_color == 'white' else 'white'
                             selected_checker = None
 
-                elif functions.can_move(selected_checker, x, y, moving_color, board.board):
+                elif functions.can_move(selected_checker, x, y, moving_color, board):
                     # если рубка невозможна, но возможен ход
-                    flag_king = selected_checker.make_move(x, y)
+                    flag_king = selected_checker.make_move(x, y, board.is_rotate)
 
                     if flag_king:
                         functions.change_status(selected_checker, [im_w_k, im_b_k])

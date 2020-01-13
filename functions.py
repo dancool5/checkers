@@ -63,7 +63,9 @@ def is_killing_possible(moving_checkers, not_moving_checkers, all_checkers):
     return False
 
 
-def can_move(checker, x, y, color, all_checkers):
+def can_move(checker, x, y, color, board):
+    all_checkers = board.board
+
     if x % 2 == y % 2:
         return False
     if checker.is_king:
@@ -87,10 +89,12 @@ def can_move(checker, x, y, color, all_checkers):
         elif checker.y + 1 > 7:
             return False
 
-        if color == checker.color == 'white':
+        if ((color == checker.color == 'white' and not board.is_rotate) or
+            (color == checker.color == 'black' and board.is_rotate)):
             if abs(checker.x - x) == 1 and y - checker.y == -1:
                 return True
-        elif color == checker.color == 'black':
+        elif ((color == checker.color == 'white' and board.is_rotate) or
+            (color == checker.color == 'black' and not board.is_rotate)):
             if abs(checker.x - x) == 1 and checker.y - y == -1:
                 return True
         return False
