@@ -96,3 +96,21 @@ class Board:
             checker.make_move(self.lines - checker.x - 1, self.cols - checker.y - 1, True)
 
         self.is_rotate = not self.is_rotate
+
+
+class Button(pygame.sprite.Sprite):
+    def __init__(self, image, group):
+        super().__init__(group)
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 0
+
+    def set_pos(self, x, y):
+        self.rect.x = x
+        self.rect.y = y
+
+    def is_pressed(self, pos):
+        if self.rect.collidepoint(pos):
+            return True
+        return False
