@@ -40,6 +40,9 @@ while running:
     elif state == 'count_players':
         screen.blit(text_count_player, (width // 40, height // 5))
 
+    elif state == 'choosing_color':
+        screen.blit(text_choose_color, (width // 6, height // 5))
+
     buttons_sprites.draw(screen)
     pygame.display.flip()
 
@@ -79,16 +82,51 @@ while running:
                 if flag:
                     if count_player == 2:
                         state = 'game'
-
                         width = old_width
                         height = old_height
 
                         pygame.time.wait(250)
                         import main
+
                         running = False
                     elif count_player == 1:
-                        state = ''
-                pass
+                        state = 'choosing_color'
 
+                        buttons.remove(button_1player)
+                        buttons_sprites.remove(button_1player)
+                        buttons.remove(button_2player)
+                        buttons_sprites.remove(button_2player)
+
+                        button_white = Button(functions.load_image('button_white.png'), buttons_sprites)
+                        button_white.set_pos((width // 2 - button_white.rect.width) // 2, 2 * height // 3)
+                        buttons.append(button_white)
+
+                        button_black = Button(functions.load_image('button_black.png'), buttons_sprites)
+                        button_black.set_pos((width // 2 - button_black.rect.width) // 2 + width // 2,
+                                             2 * height // 3)
+                        buttons.append(button_black)
+
+                        font = pygame.font.Font(None, width // 11)
+                        str_choose_color = 'Выберите цвет шашек'
+                        text_choose_color = font.render(str_choose_color, 1, (255, 255, 255))
+
+            elif state == 'choosing_color':
+                if button_white.is_pressed(event.pos):
+                    moving_color = 'white'
+                elif button_black.is_pressed(event.pos):
+                    moving_color = 'black'
+                state = 'game'
+
+                buttons.remove(button_white)
+                buttons_sprites.remove(button_white)
+                buttons.remove(button_black)
+                buttons_sprites.remove(button_black)
+
+                width = old_width
+                height = old_height
+
+                pygame.time.wait(250)
+                import main
+                running = False
 
 pygame.quit()
