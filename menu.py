@@ -1,24 +1,16 @@
 import pygame
-
-import functions
 from classes import Button
-
+import functions
+from settings import *
 
 pygame.init()
-width, height = 800, 800
-left, right, bottom, top = 10, 10, 10, 10  # границы рамки
-lines, cols = 8, 8
 
-# корректировка размеров экрана
-if left > top:
-    cell_length = (width - left - right) // lines
-    height = cell_length * cols + top + bottom
-else:
-    cell_length = (width - top - bottom) // lines
-    width = cell_length * lines + left + right
+old_width = width
+old_height = height
 
 size = (width, height)
 screen = pygame.display.set_mode(size)
+
 # корректировка размеров экрана в соответствии с картинкой заднего фона
 screen_saver = functions.load_image('screen_saver.png')
 height = int(width / screen_saver.get_rect().size[0] * height)
@@ -36,17 +28,16 @@ button_new_game = Button(functions.load_image('button_newgame.png'), buttons_spr
 button_new_game.set_pos(3 * width // 5, 5 * height // 6)
 buttons.append(button_new_game)
 
-state = 'main_menu'
 running = True
 
 while running:
     # отрисовка фона и текстов вопросов
+    screen.fill(pygame.Color('black'))
+
     if state == 'main_menu':
-        screen.fill(pygame.Color('black'))
         screen.blit(image, (0, 0))
 
     elif state == 'count_players':
-        screen.fill(pygame.Color('black'))
         screen.blit(text_count_player, (width // 40, height // 5))
 
     buttons_sprites.draw(screen)
@@ -87,9 +78,16 @@ while running:
 
                 if flag:
                     if count_player == 2:
+                        state = 'game'
+
+                        width = old_width
+                        height = old_height
+
                         pygame.time.wait(250)
                         import main
                         running = False
+                    elif count_player == 1:
+                        state = ''
                 pass
 
 

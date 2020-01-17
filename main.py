@@ -1,13 +1,9 @@
 import pygame
 from classes import Board, Checker
 import functions
-
+from settings import *
 
 pygame.init()
-
-width, height = 800, 800
-left, right, bottom, top = 200, 10, 10, 10  # границы рамки
-lines, cols = 8, 8
 # корректировка размеров экрана
 if left > top:
     cell_length = (width - left - right) // lines
@@ -22,19 +18,13 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption('Checkers')
 pygame.display.set_icon(pygame.transform.scale(functions.load_image('icon.ico'), (32, 32)))
 
-FPS = 30
-clock = pygame.time.Clock()
-running = True
-
-font = pygame.font.Font(None, (left - left // 20) // 5)
-
-all_sprites = pygame.sprite.Group()
-board = Board(left, top, cell_length, lines, cols)
-
 im_w_ch = pygame.transform.scale(functions.load_image('white_checker.png'), (cell_length, cell_length))
 im_w_k = pygame.transform.scale(functions.load_image('white_king.png'), (cell_length, cell_length))
 im_b_ch = pygame.transform.scale(functions.load_image('black_checker.png'), (cell_length, cell_length))
 im_b_k = pygame.transform.scale(functions.load_image('black_king.png'), (cell_length, cell_length))
+
+all_sprites = pygame.sprite.Group()
+board = Board(left, top, cell_length, lines, cols)
 
 # добавление шашек на доску
 for line in range(lines - 3, lines):
@@ -49,9 +39,15 @@ for line in range(0, 3):
                           cell_length, lines, cols)
         board.board.append(checker)
 
-moving_color = 'white'
+if moving_color == 'black':
+    board.rotate()
 selected_checker = None
 
+font = pygame.font.Font(None, (left - left // 20) // 5)
+
+FPS = 30
+clock = pygame.time.Clock()
+running = True
 
 while running:
     for event in pygame.event.get():
