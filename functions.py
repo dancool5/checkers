@@ -1,5 +1,6 @@
 from os import path
 import pygame
+from settings import width, height, state
 
 
 def can_kill(checker1, checker2, all_checkers, x, y, flag):
@@ -178,3 +179,14 @@ def find_killed_checker(sel_checker, all_checkers, x, y, not_moving_ch):
         else:
             killed_checker = sel_checker
     return killed_checker
+
+
+def start_game(old_width, old_height):
+    global width, height, state
+
+    state = 'game'
+    width = old_width
+    height = old_height
+
+    pygame.time.wait(250)
+    return [], pygame.sprite.Group()

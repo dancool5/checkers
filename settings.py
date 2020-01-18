@@ -4,3 +4,4 @@ lines, cols = 8, 8
 
 moving_color = 'white'
 state = 'main_menu'
+is_closed = False

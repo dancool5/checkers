@@ -53,6 +53,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            is_closed = True
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == pygame.BUTTON_LEFT:
             x, y = board.get_cell(event.pos)
             other_checker = functions.select(x, y, board.board, moving_color, event.pos)
@@ -101,6 +102,7 @@ while running:
     if win_text:
         running = False
         print(win_text)
+        state = 'end_game'
 
     clock.tick(FPS)
 

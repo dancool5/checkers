@@ -53,8 +53,8 @@ while running:
             if state == 'main_menu':
                 if button_new_game.is_pressed(event.pos):
                     state = 'count_players'
-                    buttons.remove(button_new_game)
-                    buttons_sprites.remove(button_new_game)
+                    buttons = []
+                    buttons_sprites = pygame.sprite.Group()
 
                     button_1player = Button(functions.load_image('button_1player.png'), buttons_sprites)
                     button_1player.set_pos((width // 2 - button_1player.rect.width) // 2, 2 * height // 3)
@@ -81,21 +81,19 @@ while running:
 
                 if flag:
                     if count_player == 2:
-                        state = 'game'
-                        width = old_width
-                        height = old_height
+                        buttons, buttons_sprites = functions.start_game(old_width, old_height)
 
                         pygame.time.wait(250)
                         import main
 
-                        running = False
+                        if is_closed:
+                            running = False
+
                     elif count_player == 1:
                         state = 'choosing_color'
 
-                        buttons.remove(button_1player)
-                        buttons_sprites.remove(button_1player)
-                        buttons.remove(button_2player)
-                        buttons_sprites.remove(button_2player)
+                        buttons = []
+                        buttons_sprites = pygame.sprite.Group()
 
                         button_white = Button(functions.load_image('button_white.png'), buttons_sprites)
                         button_white.set_pos((width // 2 - button_white.rect.width) // 2, 2 * height // 3)
@@ -115,18 +113,13 @@ while running:
                     moving_color = 'white'
                 elif button_black.is_pressed(event.pos):
                     moving_color = 'black'
-                state = 'game'
 
-                buttons.remove(button_white)
-                buttons_sprites.remove(button_white)
-                buttons.remove(button_black)
-                buttons_sprites.remove(button_black)
+                buttons, buttons_sprites = functions.start_game(old_width, old_height)
 
-                width = old_width
-                height = old_height
-
-                pygame.time.wait(250)
                 import main
-                running = False
+
+                if is_closed:
+                    running = False
+
 
 pygame.quit()
