@@ -1,3 +1,5 @@
+import runpy
+
 import pygame
 from classes import Board, Checker
 import functions
@@ -129,7 +131,8 @@ while running:
         print(win_text)
         s.state = 'main_menu'
         s.width, s.height = old_width, old_height
-        import menu
+        pygame.time.wait(250)
+        runpy.run_module('menu')
 
     clock.tick(FPS)
 

@@ -1,4 +1,8 @@
+import os
+import runpy
+
 import pygame
+
 from classes import Button
 import functions
 import settings as s
@@ -85,10 +89,8 @@ while running:
                         buttons, buttons_sprites = functions.start_game(old_width, old_height)
 
                         pygame.time.wait(250)
-                        import main
-
-                        if s.is_closed:
-                            running = False
+                        runpy.run_module('main')
+                        running = False
 
                     elif count_player == 1:
                         s.state = 'choosing_color'
@@ -116,10 +118,8 @@ while running:
                     s.moving_color = 'black'
 
                 buttons, buttons_sprites = functions.start_game(old_width, old_height)
-                import main
-
-                if s.is_closed:
-                    running = False
+                runpy.run_module('main')
+                running = False
 
 
 pygame.quit()
