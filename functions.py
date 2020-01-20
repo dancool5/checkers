@@ -1,6 +1,6 @@
 from os import path
 import pygame
-from settings import width, height, state
+import settings as s
 
 
 def can_kill(checker1, checker2, all_checkers, x, y, flag):
@@ -91,24 +91,22 @@ def can_move(checker, x, y, color, board):
             return False
 
         if ((color == checker.color == 'white' and not board.is_rotate) or
-            (color == checker.color == 'black' and board.is_rotate)):
+                (color == checker.color == 'black' and board.is_rotate)):
             if abs(checker.x - x) == 1 and y - checker.y == -1:
                 return True
         elif ((color == checker.color == 'white' and board.is_rotate) or
-            (color == checker.color == 'black' and not board.is_rotate)):
+              (color == checker.color == 'black' and not board.is_rotate)):
             if abs(checker.x - x) == 1 and checker.y - y == -1:
                 return True
         return False
 
 
-def check_winning(all_checkers):
-    black_ch = [checker for checker in all_checkers if checker.color == 'black']
-    white_ch = [checker for checker in all_checkers if checker.color == 'white']
+def check_winning(black_ch, white_ch):
     if len(black_ch) == 0:
-        return 'White wins', black_ch, white_ch
+        return 'White wins'
     if len(white_ch) == 0:
-        return 'Black wins', black_ch, white_ch
-    return None, black_ch, white_ch
+        return 'Black wins'
+    return None
 
 
 def change_status(checker, images):
@@ -182,11 +180,18 @@ def find_killed_checker(sel_checker, all_checkers, x, y, not_moving_ch):
 
 
 def start_game(old_width, old_height):
-    global width, height, state
-
-    state = 'game'
-    width = old_width
-    height = old_height
+    s.state = 'game'
+    s.width = old_width
+    s.height = old_height
 
     pygame.time.wait(250)
     return [], pygame.sprite.Group()
+
+
+def declination(checkers, color):  # функция для правильного склонения слова 'шашка' в зависимости от числительного
+    count = len(checkers)
+    if count == 1:
+        return str(count) + ' ' + color[0] + ' шашка'
+    elif count > 4 or count == 0:
+        return str(count) + ' ' + color[0] + ' шашек'
+    return str(count) + ' ' + color[0] + ' шашки'

@@ -1,18 +1,22 @@
 import pygame
 from classes import Board, Checker
 import functions
-from settings import *
+import settings as s
 
 pygame.init()
-# корректировка размеров экрана
-if left > top:
-    cell_length = (width - left - right) // lines
-    height = cell_length * cols + top + bottom
-else:
-    cell_length = (width - top - bottom) // lines
-    width = cell_length * lines + left + right
 
-size = (width, height)
+old_width = s.width
+old_height = s.height
+
+# корректировка размеров экрана
+if s.left > s.top:
+    cell_length = (s.width - s.left - s.right) // s.lines
+    s.height = cell_length * s.cols + s.top + s.bottom
+else:
+    cell_length = (s.width - s.top - s.bottom) // s.lines
+    s.width = cell_length * s.lines + s.left + s.right
+
+size = (s.width, s.height)
 screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption('Checkers')
@@ -24,47 +28,68 @@ im_b_ch = pygame.transform.scale(functions.load_image('black_checker.png'), (cel
 im_b_k = pygame.transform.scale(functions.load_image('black_king.png'), (cell_length, cell_length))
 
 all_sprites = pygame.sprite.Group()
-board = Board(left, top, cell_length, lines, cols)
+board = Board(s.left, s.top, cell_length, s.lines, s.cols)
 
 # добавление шашек на доску
-for line in range(lines - 3, lines):
+for line in range(s.lines - 3, s.lines):
     for col in range((line + 1) % 2, 8, 2):
-        checker = Checker(col, line, 'white', all_sprites, im_w_ch, left, top,
-                          cell_length, lines, cols)
+        checker = Checker(col, line, 'white', all_sprites, im_w_ch, s.left, s.top,
+                          cell_length, s.lines, s.cols)
         board.board.append(checker)
 
 for line in range(0, 3):
     for col in range((line + 1) % 2, 8, 2):
-        checker = Checker(col, line, 'black', all_sprites, im_b_ch, left, top,
-                          cell_length, lines, cols)
+        checker = Checker(col, line, 'black', all_sprites, im_b_ch, s.left, s.top,
+                          cell_length, s.lines, s.cols)
         board.board.append(checker)
 
-if moving_color == 'black':
+if s.moving_color == 'black':
     board.rotate()
 selected_checker = None
 
-font = pygame.font.Font(None, (left - left // 20) // 5)
+font = pygame.font.Font(None, (s.left - s.left // 20) // 5)
 
 FPS = 30
 clock = pygame.time.Clock()
 running = True
 
 while running:
+    black_ch = [checker for checker in board.board if checker.color == 'black']
+    white_ch = [checker for checker in board.board if checker.color == 'white']
+
+    screen.fill(pygame.Color('black'))
+    board.render(screen, selected_checker)
+    all_sprites.draw(screen)
+
+    str_turn = 'Ход: черных' if s.moving_color == 'black' else 'Ход: белых'
+    text_turn = font.render(str_turn, 1, (255, 255, 255))
+    screen.blit(text_turn, (s.left // 20, s.top))
+
+    str_white_count = functions.declination(white_ch, 'белые')
+    text_white_count = font.render(str_white_count, 1, (255, 255, 255))
+    screen.blit(text_white_count, (s.left // 20, s.height - 2 * (s.left - s.left // 20) // 5))
+
+    str_black_count = functions.declination(black_ch, 'черные')
+    text_black_count = font.render(str_black_count, 1, (255, 255, 255))
+    screen.blit(text_black_count, (s.left // 20, s.height - (s.left - s.left // 20) // 5))
+
+    pygame.display.flip()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            is_closed = True
+            s.is_closed = True
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == pygame.BUTTON_LEFT:
             x, y = board.get_cell(event.pos)
-            other_checker = functions.select(x, y, board.board, moving_color, event.pos)
+            other_checker = functions.select(x, y, board.board, s.moving_color, event.pos)
 
             if type(other_checker) == Checker:
                 # если шашка правильного цвета, то выделение перемещается на нее
                 selected_checker = other_checker
             elif other_checker is None and selected_checker is not None and x is not None:
                 # если выделена клетка без шашки
-                moving_ch = [ch for ch in board.board if ch.color == moving_color]
-                not_moving_ch = [ch for ch in board.board if ch.color != moving_color]
+                moving_ch = [ch for ch in board.board if ch.color == s.moving_color]
+                not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
 
                 if functions.is_killing_possible(moving_ch, not_moving_ch, board.board):
                     # если есть ходы c рубкой
@@ -79,14 +104,14 @@ while running:
                         if flag_king:
                             functions.change_status(selected_checker, [im_w_k, im_b_k])
 
-                        not_moving_ch = [ch for ch in board.board if ch.color != moving_color]
+                        not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
                         if not(functions.is_killing_possible([selected_checker], not_moving_ch, board.board)):
                             # если повторная рубка невозможна, то меняем ход
-                            moving_color = 'black' if moving_color == 'white' else 'white'
+                            s.moving_color = 'black' if s.moving_color == 'white' else 'white'
                             # board.rotate()
                             selected_checker = None
 
-                elif functions.can_move(selected_checker, x, y, moving_color, board):
+                elif functions.can_move(selected_checker, x, y, s.moving_color, board):
                     # если рубка невозможна, но возможен ход
                     flag_king = selected_checker.make_move(x, y, board.is_rotate)
 
@@ -94,34 +119,18 @@ while running:
                         functions.change_status(selected_checker, [im_w_k, im_b_k])
 
                     selected_checker = None
-                    moving_color = 'black' if moving_color == 'white' else 'white'
+                    s.moving_color = 'black' if s.moving_color == 'white' else 'white'
                     # board.rotate()
 
     # проверка на конец игры
-    win_text, black_ch, white_ch = functions.check_winning(board.board)
+    win_text = functions.check_winning(black_ch, white_ch)
     if win_text:
         running = False
         print(win_text)
-        state = 'end_game'
+        s.state = 'main_menu'
+        s.width, s.height = old_width, old_height
+        import menu
 
     clock.tick(FPS)
-
-    screen.fill(pygame.Color('black'))
-    board.render(screen, selected_checker)
-    all_sprites.draw(screen)
-
-    str_turn = 'Ход: черных' if moving_color == 'black' else 'Ход: белых'
-    text_turn = font.render(str_turn, 1, (255, 255, 255))
-    screen.blit(text_turn, (left // 20, top))
-
-    srt_white_count = str(len(white_ch)) + ' б шашек'
-    text_white_count = font.render(srt_white_count, 1, (255, 255, 255))
-    screen.blit(text_white_count, (left // 20, height - 2 * (left - left // 20) // 5))
-
-    str_black_count = str(len(black_ch)) + ' ч шашек'
-    text_black_count = font.render(str_black_count, 1, (255, 255, 255))
-    screen.blit(text_black_count, (left // 20, height - (left - left // 20) // 5))
-
-    pygame.display.flip()
 
 pygame.quit()
