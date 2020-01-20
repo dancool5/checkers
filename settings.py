@@ -4,4 +4,5 @@ lines, cols = 8, 8
 
 moving_color = 'white'
 state = 'main_menu'
+player_color = 'white'
 is_closed = False

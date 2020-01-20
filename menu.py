@@ -16,7 +16,7 @@ size = (s.width, s.height)
 screen = pygame.display.set_mode(size)
 
 # корректировка размеров экрана в соответствии с картинкой заднего фона
-screen_saver = functions.load_image('screen_saver.png')
+screen_saver = functions.load_image('screen_saver1.png')
 s.height = int(s.width / screen_saver.get_rect().size[0] * s.height)
 size = (s.width, s.height)
 image = pygame.transform.scale(screen_saver, (s.width, s.height))
@@ -33,7 +33,6 @@ button_new_game.set_pos(3 * s.width // 5, 5 * s.height // 6)
 buttons.append(button_new_game)
 
 running = True
-
 while running:
     # отрисовка фона и текстов вопросов
     screen.fill(pygame.Color('black'))
@@ -113,9 +112,9 @@ while running:
 
             elif s.state == 'choosing_color':
                 if button_white.is_pressed(event.pos):
-                    s.moving_color = 'white'
+                    s.player_color = 'white'
                 elif button_black.is_pressed(event.pos):
-                    s.moving_color = 'black'
+                    s.player_color = 'black'
 
                 buttons, buttons_sprites = functions.start_game(old_width, old_height)
                 runpy.run_module('main')

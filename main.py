@@ -45,7 +45,7 @@ for line in range(0, 3):
                           cell_length, s.lines, s.cols)
         board.board.append(checker)
 
-if s.moving_color == 'black':
+if s.player_color == 'black':
     board.rotate()
 selected_checker = None
 
