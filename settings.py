@@ -3,6 +3,6 @@ left, right, bottom, top = 200, 10, 10, 10  # границы рамки
 lines, cols = 8, 8
 
 moving_color = 'white'
-state = 'main_menu'
+state = 'end_game'
 player_color = 'white'
-is_closed = False
+winner = 'white'

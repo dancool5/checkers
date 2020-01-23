@@ -103,9 +103,9 @@ def can_move(checker, x, y, color, board):
 
 def check_winning(black_ch, white_ch):
     if len(black_ch) == 0:
-        return 'White wins'
+        return 'white'
     if len(white_ch) == 0:
-        return 'Black wins'
+        return 'black'
     return None
 
 

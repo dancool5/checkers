@@ -1,4 +1,3 @@
-import os
 import runpy
 
 import pygame
@@ -16,10 +15,10 @@ size = (s.width, s.height)
 screen = pygame.display.set_mode(size)
 
 # корректировка размеров экрана в соответствии с картинкой заднего фона
-screen_saver = functions.load_image('screen_saver1.png')
-s.height = int(s.width / screen_saver.get_rect().size[0] * s.height)
+screen_saver_im = functions.load_image('screen_saver1.png')
+s.height = int(s.width / screen_saver_im.get_rect().size[0] * s.height)
 size = (s.width, s.height)
-image = pygame.transform.scale(screen_saver, (s.width, s.height))
+screen_saver = pygame.transform.scale(screen_saver_im, (s.width, s.height))
 screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption('Checkers')
@@ -28,9 +27,32 @@ pygame.display.set_icon(pygame.transform.scale(functions.load_image('icon.ico'),
 buttons_sprites = pygame.sprite.Group()
 buttons = []
 
-button_new_game = Button(functions.load_image('button_newgame.png'), buttons_sprites)
-button_new_game.set_pos(3 * s.width // 5, 5 * s.height // 6)
-buttons.append(button_new_game)
+if s.state == 'main_menu':
+    button_new_game = Button(functions.load_image('button_newgame.png'), buttons_sprites)
+    button_new_game.set_pos(s.width // 2 - button_new_game.rect.width // 2, s.height // 5)
+    buttons.append(button_new_game)
+elif s.state == 'end_game':
+    s.moving_color = 'white'
+    if s.winner == 'white':
+        str_winning = 'Белые выиграли!'
+    elif s.winner == 'black':
+        str_winning = 'Черные выиграли'
+    font = pygame.font.Font(None, s.width // 7)
+    text_winning = font.render(str_winning, 1, (255, 255, 255))
+
+    button_again = Button(functions.load_image('button_again.png'), buttons_sprites)
+    button_again.set_pos(s.width // 2 - button_again.rect.width // 2, s.height // 4)
+    buttons.append(button_again)
+
+    button_main_menu = Button(functions.load_image('button_main_menu.png'), buttons_sprites)
+    button_main_menu.set_pos(s.width // 2 - button_main_menu.rect.width // 2, s.height // 2)
+    buttons.append(button_main_menu)
+
+    button_exit = Button(functions.load_image('button_exit.png'), buttons_sprites)
+    button_exit.set_pos(s.width // 2 - button_exit.rect.width // 2, s.height - button_exit.rect.height - s.height // 11)
+    buttons.append(button_exit)
+
+    s.winner = None
 
 running = True
 while running:
@@ -38,13 +60,16 @@ while running:
     screen.fill(pygame.Color('black'))
 
     if s.state == 'main_menu':
-        screen.blit(image, (0, 0))
+        screen.blit(screen_saver, (0, 0))
 
     elif s.state == 'count_players':
         screen.blit(text_count_player, (s.width // 40, s.height // 5))
 
     elif s.state == 'choosing_color':
         screen.blit(text_choose_color, (s.width // 6, s.height // 5))
+
+    elif s.state == 'end_game':
+        screen.blit(text_winning, (s.width // 13, s.height // 10))
 
     buttons_sprites.draw(screen)
     pygame.display.flip()
@@ -88,7 +113,7 @@ while running:
                         buttons, buttons_sprites = functions.start_game(old_width, old_height)
 
                         pygame.time.wait(250)
-                        runpy.run_module('main')
+                        runpy.run_module('game')
                         running = False
 
                     elif count_player == 1:
@@ -117,8 +142,29 @@ while running:
                     s.player_color = 'black'
 
                 buttons, buttons_sprites = functions.start_game(old_width, old_height)
-                runpy.run_module('main')
+                runpy.run_module('game')
                 running = False
+
+            elif s.state == 'end_game':
+                if button_again.is_pressed(event.pos):
+                    buttons, buttons_sprites = functions.start_game(old_width, old_height)
+                    runpy.run_module('game')
+                    running = False
+
+                elif button_main_menu.is_pressed(event.pos):
+                    s.state = 'main_menu'
+
+                    buttons_sprites = pygame.sprite.Group()
+                    buttons = []
+
+                    button_new_game = Button(functions.load_image('button_newgame.png'), buttons_sprites)
+                    button_new_game.set_pos(s.width // 2 - button_new_game.rect.width // 2, s.height // 5)
+                    buttons.append(button_new_game)
+
+                    pygame.time.wait(250)
+
+                elif button_exit.is_pressed(event.pos):
+                    running = False
 
 
 pygame.quit()
