@@ -1,8 +1,9 @@
 import pygame
+from settings import *
 
 
 class Checker(pygame.sprite.Sprite):
-    def __init__(self, x, y, color, all_sprites, image, left, top, cell_length, lines, cols):
+    def __init__(self, x, y, color, all_sprites, image, cell_length):
         super().__init__(all_sprites)
 
         self.left, self.top = left, top
@@ -33,12 +34,9 @@ class Checker(pygame.sprite.Sprite):
 
         return False
 
-    def update(self, *args):
-        self.get_event(args[0])
-
 
 class Board:
-    def __init__(self, left, top, cell_length, lines, cols):
+    def __init__(self, cell_length):
         self.left, self.top = left, top
         self.cell_length = cell_length
         self.lines, self.cols = lines, cols

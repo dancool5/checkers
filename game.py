@@ -30,20 +30,41 @@ im_b_ch = pygame.transform.scale(functions.load_image('black_checker.png'), (cel
 im_b_k = pygame.transform.scale(functions.load_image('black_king.png'), (cell_length, cell_length))
 
 all_sprites = pygame.sprite.Group()
-board = Board(s.left, s.top, cell_length, s.lines, s.cols)
+board = Board(cell_length)
 
 # добавление шашек на доску
-for line in range(s.lines - 3, s.lines):
-    for col in range((line + 1) % 2, 8, 2):
-        checker = Checker(col, line, 'white', all_sprites, im_w_ch, s.left, s.top,
-                          cell_length, s.lines, s.cols)
-        board.board.append(checker)
+if s.arrangement:
+    # по загруженному файлу
+    line, col = 0, 0
+    for char in s.arrangement:
+        if char.lower() == 'w':
+            checker = Checker(col, line, 'white', all_sprites, im_w_ch, cell_length)
+            board.board.append(checker)
+            if char == 'W':
+                functions.change_status(checker, [im_w_k, im_b_k])
 
-for line in range(0, 3):
-    for col in range((line + 1) % 2, 8, 2):
-        checker = Checker(col, line, 'black', all_sprites, im_b_ch, s.left, s.top,
-                          cell_length, s.lines, s.cols)
-        board.board.append(checker)
+        elif char.lower() == 'b':
+            checker = Checker(col, line, 'black', all_sprites, im_b_ch, cell_length)
+            board.board.append(checker)
+            if char == 'B':
+                functions.change_status(checker, [im_w_k, im_b_k])
+
+        if char != '\n':
+            col += 1
+        if col == s.cols:
+            col = 0
+            line += 1
+else:
+    # по стандарту
+    for line in range(s.lines - 3, s.lines):
+        for col in range((line + 1) % 2, 8, 2):
+            checker = Checker(col, line, 'white', all_sprites, im_w_ch, cell_length)
+            board.board.append(checker)
+
+    for line in range(0, 3):
+        for col in range((line + 1) % 2, 8, 2):
+            checker = Checker(col, line, 'black', all_sprites, im_b_ch, cell_length)
+            board.board.append(checker)
 
 if s.player_color == 'black':
     board.rotate()

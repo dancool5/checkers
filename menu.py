@@ -1,5 +1,9 @@
 import runpy
 
+from tkinter.filedialog import askopenfilename
+from tkinter.messagebox import showinfo
+from tkinter import Tk
+
 import pygame
 
 from classes import Button
@@ -29,8 +33,17 @@ buttons = []
 
 if s.state == 'main_menu':
     button_new_game = Button(functions.load_image('button_newgame.png'), buttons_sprites)
-    button_new_game.set_pos(s.width // 2 - button_new_game.rect.width // 2, s.height // 5)
+    button_new_game.set_pos(s.width // 2 - button_new_game.rect.width // 2, s.height // 4)
     buttons.append(button_new_game)
+
+    button_download = Button(functions.load_image('button_download.png'), buttons_sprites)
+    button_download.set_pos(s.width // 2 - button_download.rect.width // 2, s.height // 2)
+    buttons.append(button_download)
+
+    button_exit = Button(functions.load_image('button_exit.png'), buttons_sprites)
+    button_exit.set_pos(s.width // 2 - button_exit.rect.width // 2, s.height - button_exit.rect.height - s.height // 11)
+    buttons.append(button_exit)
+
 elif s.state == 'end_game':
     s.moving_color = 'white'
     if s.winner == 'white':
@@ -79,7 +92,20 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == pygame.BUTTON_LEFT:
             if s.state == 'main_menu':
-                if button_new_game.is_pressed(event.pos):
+                if button_download.is_pressed(event.pos):
+                    Tk().withdraw()
+                    try:
+                        file_name = askopenfilename()
+                        f = open(file_name)
+                        s.arrangement = f.read()
+                        f.close()
+                        is_downloaded = True
+
+                    except FileNotFoundError:
+                        showinfo("Внимание", "Файл не загружен")
+
+                if button_new_game.is_pressed(event.pos) or (button_download.is_pressed(event.pos) and is_downloaded):
+                    is_downloaded = False
                     s.state = 'count_players'
                     buttons = []
                     buttons_sprites = pygame.sprite.Group()
@@ -100,6 +126,12 @@ while running:
                     flag = False  # флаг для проверки нажатия на кнопки выбора количества игроков
 
                     pygame.time.wait(250)
+
+
+
+                elif button_exit.is_pressed(event.pos):
+                    running = False
+
             elif s.state == 'count_players':
                 if button_1player.is_pressed(event.pos):
                     count_player = 1
@@ -153,17 +185,28 @@ while running:
 
                 elif button_main_menu.is_pressed(event.pos):
                     s.state = 'main_menu'
+                    s.arrangement = None
 
                     buttons_sprites = pygame.sprite.Group()
                     buttons = []
 
                     button_new_game = Button(functions.load_image('button_newgame.png'), buttons_sprites)
-                    button_new_game.set_pos(s.width // 2 - button_new_game.rect.width // 2, s.height // 5)
+                    button_new_game.set_pos(s.width // 2 - button_new_game.rect.width // 2, s.height // 4)
                     buttons.append(button_new_game)
+
+                    button_download = Button(functions.load_image('button_download.png'), buttons_sprites)
+                    button_download.set_pos(s.width // 2 - button_download.rect.width // 2, s.height // 2)
+                    buttons.append(button_download)
+
+                    button_exit = Button(functions.load_image('button_exit.png'), buttons_sprites)
+                    button_exit.set_pos(s.width // 2 - button_exit.rect.width // 2,
+                                        s.height - button_exit.rect.height - s.height // 11)
+                    buttons.append(button_exit)
 
                     pygame.time.wait(250)
 
                 elif button_exit.is_pressed(event.pos):
+                    s.arrangement = None
                     running = False
 
 
