@@ -1,7 +1,6 @@
 import runpy
 
 from tkinter.filedialog import askopenfilename
-from tkinter.messagebox import showinfo
 from tkinter import Tk
 
 import pygame
@@ -20,9 +19,10 @@ screen = pygame.display.set_mode(size)
 
 # корректировка размеров экрана в соответствии с картинкой заднего фона
 screen_saver_im = functions.load_image('screen_saver1.png')
-s.height = int(s.width / screen_saver_im.get_rect().size[0] * s.height)
+s.height = s.width * s.height // screen_saver_im.get_rect().size[0]
 size = (s.width, s.height)
 screen_saver = pygame.transform.scale(screen_saver_im, (s.width, s.height))
+# screen_saver = screen_saver_im
 screen = pygame.display.set_mode(size)
 
 pygame.display.set_caption('Checkers')
@@ -102,7 +102,7 @@ while running:
                         is_downloaded = True
 
                     except FileNotFoundError:
-                        showinfo("Внимание", "Файл не загружен")
+                        is_downloaded = False
 
                 if button_new_game.is_pressed(event.pos) or (button_download.is_pressed(event.pos) and is_downloaded):
                     is_downloaded = False
@@ -126,8 +126,6 @@ while running:
                     flag = False  # флаг для проверки нажатия на кнопки выбора количества игроков
 
                     pygame.time.wait(250)
-
-
 
                 elif button_exit.is_pressed(event.pos):
                     running = False
