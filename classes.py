@@ -20,7 +20,11 @@ class Checker(pygame.sprite.Sprite):
 
         self.is_king = False
 
-    def make_move(self, x, y, is_rotate):
+    def make_move(self, x, y, is_rotate, is_play_sound=True):
+        if is_play_sound:
+            move_sound = pygame.mixer.Sound('data/Audio/moving.wav')
+            move_sound.play()
+
         self.x, self.y = x, y
         self.rect = self.image.get_rect()
         self.rect.x = self.left + self.cell_length * self.x
@@ -91,7 +95,7 @@ class Board:
         for checker in self.board:
             checker.image = images[0]
             del images[0]
-            checker.make_move(self.lines - checker.x - 1, self.cols - checker.y - 1, True)
+            checker.make_move(self.lines - checker.x - 1, self.cols - checker.y - 1, True, False)
 
         self.is_rotate = not self.is_rotate
 
@@ -110,5 +114,8 @@ class Button(pygame.sprite.Sprite):
 
     def is_pressed(self, pos):
         if self.rect.collidepoint(pos):
+            click_sound = pygame.mixer.Sound('data/Audio/click.wav')
+            click_sound.play()
+
             return True
         return False

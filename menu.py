@@ -45,6 +45,9 @@ if s.state == 'main_menu':
     buttons.append(button_exit)
 
 elif s.state == 'end_game':
+    win_sound = pygame.mixer.Sound('data/Audio/winning.wav')
+    win_sound.play()
+
     s.moving_color = 'white'
     if s.winner == 'white':
         str_winning = 'Белые выиграли!'

@@ -79,7 +79,7 @@ selected_checker = None
 
 font = pygame.font.Font(None, (s.left - s.left // 20) // 5)
 
-# кнопки, текст и фон для меню
+# кнопки, текст и фон для паузы
 font_pause = pygame.font.Font(None, s.width // 5)
 str_pause = 'Пауза'
 text_pause = font_pause.render(str_pause, 1, (255, 255, 255))
@@ -94,9 +94,9 @@ button_continue.set_pos(s.width // 2 - button_continue.rect.width // 2, s.height
 button_save = Button(functions.load_image('button_save.png'), buttons_sprites)
 button_save.set_pos(s.width // 2 - button_save.rect.width // 2, s.height // 2)
 
-button_exit = Button(functions.load_image('button_exit.png'), buttons_sprites)
-button_exit.set_pos(s.width // 2 - button_exit.rect.width // 2,
-                    s.height - button_exit.rect.height - s.height // 11)
+button_main_menu = Button(functions.load_image('button_main_menu.png'), buttons_sprites)
+button_main_menu.set_pos(s.width // 2 - button_main_menu.rect.width // 2,
+                         s.height - button_main_menu.rect.height - s.height // 11)
 
 FPS = 30
 clock = pygame.time.Clock()
@@ -188,8 +188,14 @@ while running:
                         except FileNotFoundError:
                             pass
 
-                    elif button_exit.is_pressed(event.pos):
+                    elif button_main_menu.is_pressed(event.pos):
+                        s.state = 'main_menu'
                         running = False
+                        s.width, s.height = old_width, old_height
+                        s.moving_color = 'white'
+                        pygame.time.wait(250)
+
+                        runpy.run_module('menu')
 
                 else:
                     x, y = board.get_cell(event.pos)
@@ -209,6 +215,9 @@ while running:
                                                                            board.board, x, y, not_moving_ch)
                             if functions.can_kill(selected_checker, killed_checker, board.board, x, y, True):
                                 # если данная рубка возможна
+                                win_sound = pygame.mixer.Sound('data/Audio/killing.wav')
+                                win_sound.play()
+
                                 board.board.remove(killed_checker)
                                 all_sprites.remove(killed_checker)
                                 flag_king = selected_checker.make_move(x, y, board.is_rotate)
@@ -235,6 +244,9 @@ while running:
                             # board.rotate()
 
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                click_sound = pygame.mixer.Sound('data/Audio/click.wav')
+                click_sound.play()
+
                 is_paused = not is_paused
 
     # проверка на конец игры
