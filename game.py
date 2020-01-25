@@ -60,14 +60,14 @@ if s.arrangement:
                 checker = Checker(col, line, 'white', all_sprites, im_w_ch, cell_length)
                 board.board.append(checker)
                 if char == 'W' or line == 0:
-                    functions.change_status(checker, [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
+                    functions.change_status(checker, [[im_w_ch_k1, im_w_ch_k2, im_w_ch_k3, im_w_k],
                                             [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
             elif char.lower() == 'b':
                 checker = Checker(col, line, 'black', all_sprites, im_b_ch, cell_length)
                 board.board.append(checker)
                 if char == 'B' or line == s.lines - 1:
-                    functions.change_status(checker, [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
+                    functions.change_status(checker, [[im_w_ch_k1, im_w_ch_k2, im_w_ch_k3, im_w_k],
                                             [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
         if char != '\n':
@@ -112,7 +112,7 @@ button_main_menu = Button(functions.load_image('button_main_menu.png'), buttons_
 button_main_menu.set_pos(s.width // 2 - button_main_menu.rect.width // 2,
                          s.height - button_main_menu.rect.height - s.height // 11)
 
-FPS = 30
+FPS = 20
 clock = pygame.time.Clock()
 
 is_paused = False
@@ -172,9 +172,8 @@ while running:
             flag_king = kill_ch.make_move(x_kill, y_kill, board.is_rotate)
 
             if flag_king:
-                functions.change_status(kill_ch,
-                                        [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
-                                         [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
+                kill_ch.change_status([[im_w_ch_k1, im_w_ch_k2, im_w_ch_k3, im_w_k],
+                                                [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
             not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
 
@@ -190,9 +189,8 @@ while running:
             flag_king = move_checker.make_move(x_move, y_move, board.is_rotate)
 
             if flag_king:
-                functions.change_status(move_checker,
-                                        [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
-                                         [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
+                move_checker.change_status([[im_w_ch_k1, im_w_ch_k2, im_w_ch_k3, im_w_k],
+                                                [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
             s.moving_color = 'black' if s.moving_color == 'white' else 'white'
 
     else:
@@ -276,9 +274,8 @@ while running:
                                 flag_king = selected_checker.make_move(x, y, board.is_rotate)
 
                                 if flag_king:
-                                    functions.change_status(selected_checker,
-                                                            [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
-                                                             [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
+                                    selected_checker.change_status([[im_w_ch_k1, im_w_ch_k2, im_w_ch_k3, im_w_k],
+                                                                    [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
                                 not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
                                 if not(functions.is_killing_possible([selected_checker], not_moving_ch, board.board)):
@@ -292,8 +289,7 @@ while running:
                             flag_king = selected_checker.make_move(x, y, board.is_rotate)
 
                             if flag_king:
-                                functions.change_status(selected_checker,
-                                                        [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
+                                selected_checker.change_status([[im_w_ch_k1, im_w_ch_k2, im_w_ch_k3, im_w_k],
                                                          [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
                             selected_checker = None
@@ -319,6 +315,9 @@ while running:
     not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
     if not functions.collect_moves(board, moving_ch, not_moving_ch):
         s.moving_color = 'black' if s.moving_color == 'white' else 'white'
+
+    all_sprites.update()
+
 
     clock.tick(FPS)
 

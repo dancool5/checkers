@@ -5,8 +5,8 @@ import settings as s
 
 def can_kill(checker1, checker2, all_checkers, x, y, flag):
     if flag:
-        # эти условия проверяются в случае, если нужно рассмотреть конкретную
-        # ситуацию с рубкой, которую выделил сам игрок
+        # эти условия проверяются в случае, если нужно рассмотреть конкретную ситуацию с рубкой, которую выделил сам
+        # игрок
         for ch in all_checkers:
             if ch.x == x and ch.y == y:
                 return False
@@ -28,8 +28,8 @@ def can_kill(checker1, checker2, all_checkers, x, y, flag):
         return True
     else:
         if flag:
-            # эти условия проверяются в случае, если нужно рассмотреть конкретную
-            # ситуацию с рубкой, которую выделил сам игрок
+            # эти условия проверяются в случае, если нужно рассмотреть конкретную ситуацию с рубкой, которую выделил
+            # сам игрок
             checking = special_check(checker1.x, checker1.y, x, y, all_checkers)
             if checking is None or type(checking) is list:
                 return False
@@ -131,23 +131,6 @@ def check_winning(black_ch, white_ch):
     return None
 
 
-def change_status(checker, images, need_changing=True):
-    checker.is_king = True
-
-    if need_changing:
-        FPS = 10
-        clock = pygame.time.Clock()
-        w_images, b_images = images[0], images[1]
-        if checker.color == 'white':
-            for image in w_images:
-                checker.image = image
-                clock.tick(FPS)
-        else:
-            for image in b_images:
-                checker.image = image
-                clock.tick(FPS)
-
-
 def special_check(x1, y1, x2, y2, all_checkers):
     # эта функция нужна для проверки есть ли между двумя клетками по диагонали другие шашки
     ch = []
@@ -226,77 +209,10 @@ def declination(checkers, color):  # функция для правильног�
         return str(count) + ' ' + color[0] + ' шашек'
     return str(count) + ' ' + color[0] + ' шашки'
 
-move_ = ()
-score = -1000
-best_score = 0
-best_move = ()
-
-def AI_turn(board, depth):
-    global score, best_score, move_, best_move
-    moves, is_killing = collect_moves(board)
-
-    for move in moves:
-        if is_killing:
-            checker1, checker2, x_kill, y_kill = move[0], move[1], move[2][0], move[2][1]
-            if can_kill(checker1, checker2, board.board, x_kill, y_kill, True):
-                # если данная рубка возможна
-                board.board.remove(checker2)
-                if s.moving_color == s.player_color:
-                    score -= 10
-                else:
-                    score += 10
-
-                flag_king = checker1.make_move(x_kill, y_kill, board.is_rotate)
-
-                if flag_king:
-                    if s.moving_color == s.player_color:
-                        score -= 5
-                    else:
-                        score += 5
-
-                    change_status(checker1, [], False)
-
-                moves, is_killing = collect_moves(board)
-                if not is_killing:
-                    s.moving_color = 'black' if s.moving_color == 'white' else 'white'
-                    if depth == 0:
-                        if best_score < score:
-                            best_score = score
-                            best_move = move
-                    elif depth == 6:
-                        move_ = (checker1, checker2, x_kill, y_kill)
-                    else:
-                        AI_turn(board, depth - 1)
-                else:
-                    AI_turn(board, depth)
-
-        else:
-            checker1, x_move, y_move = move[0], move[1][0], move[1][1]
-            if s.moving_color != s.player_color:
-                score -= 1
-            flag_king = checker1.make_move(x_move, y_move, board.is_rotate)
-
-            if flag_king:
-                change_status(checker1, [], False)
-
-            s.moving_color = 'black' if s.moving_color == 'white' else 'white'
-
-            if depth == 0:
-                if best_score < score:
-                    best_score = score
-                    best_move = move
-            elif depth == 6:
-                move_ = (checker1, x_move, y_move)
-            else:
-                AI_turn(board, depth - 1)
-
-    return best_move
-
 
 def collect_moves(board, moving_ch, not_moving_ch):
     moves = []
     kills = is_killing_possible(moving_ch, not_moving_ch, board.board, True)
-
 
     if kills:
         # если возможна рубка

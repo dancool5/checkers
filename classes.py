@@ -18,6 +18,8 @@ class Checker(pygame.sprite.Sprite):
         self.rect.x = left + x * cell_length
         self.rect.y = top + y * cell_length
 
+        self.is_update = False
+
         self.is_king = False
 
     def make_move(self, x, y, is_rotate, is_play_sound=True):
@@ -37,6 +39,26 @@ class Checker(pygame.sprite.Sprite):
                 return True
 
         return False
+
+    def update(self):
+        if self.is_update:
+            if self.color == 'white':
+                self.image = self.images[0][self.num_image]
+            else:
+                self.image = self.images[1][self.num_image]
+
+            self.rect = self.image.get_rect()
+            self.rect.x = left + self.x * self.cell_length
+            self.rect.y = top + self.y * self.cell_length
+            self.num_image += 1
+            if self.num_image > 3:
+                self.is_update = False
+
+    def change_status(self, images):
+        self.is_update = True
+        self.is_king = True
+        self.images = images
+        self.num_image = 0
 
 
 class Board:
