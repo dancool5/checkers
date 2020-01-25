@@ -1,9 +1,9 @@
 w
-0b0b0b0b
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-w0w0w0w0
+wwwwwwww
+bbbbbbbb
+wwwwwwww
+bbbbbbbb
+wwwwwwww
+bbbbbbbb
+wwwwwwww
+bbbbbbbb
