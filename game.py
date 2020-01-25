@@ -26,8 +26,19 @@ pygame.display.set_caption('Checkers')
 pygame.display.set_icon(pygame.transform.scale(functions.load_image('icon.ico'), (32, 32)))
 
 im_w_ch = pygame.transform.scale(functions.load_image('white_checker.png'), (cell_length, cell_length))
+
+im_w_ch_k1 = pygame.transform.scale(functions.load_image('white_ch-k1.png'), (cell_length, cell_length))
+im_w_ch_k2 = pygame.transform.scale(functions.load_image('white_ch-k2.png'), (cell_length, cell_length))
+im_w_ch_k3 = pygame.transform.scale(functions.load_image('white_ch-k3.png'), (cell_length, cell_length))
+
 im_w_k = pygame.transform.scale(functions.load_image('white_king.png'), (cell_length, cell_length))
+
 im_b_ch = pygame.transform.scale(functions.load_image('black_checker.png'), (cell_length, cell_length))
+
+im_b_ch_k1 = pygame.transform.scale(functions.load_image('black_ch-k1.png'), (cell_length, cell_length))
+im_b_ch_k2 = pygame.transform.scale(functions.load_image('black_ch-k2.png'), (cell_length, cell_length))
+im_b_ch_k3 = pygame.transform.scale(functions.load_image('black_ch-k3.png'), (cell_length, cell_length))
+
 im_b_k = pygame.transform.scale(functions.load_image('black_king.png'), (cell_length, cell_length))
 
 all_sprites = pygame.sprite.Group()
@@ -223,7 +234,9 @@ while running:
                                 flag_king = selected_checker.make_move(x, y, board.is_rotate)
 
                                 if flag_king:
-                                    functions.change_status(selected_checker, [im_w_k, im_b_k])
+                                    functions.change_status(selected_checker,
+                                                            [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
+                                                             [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
                                 not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
                                 if not(functions.is_killing_possible([selected_checker], not_moving_ch, board.board)):
@@ -237,7 +250,9 @@ while running:
                             flag_king = selected_checker.make_move(x, y, board.is_rotate)
 
                             if flag_king:
-                                functions.change_status(selected_checker, [im_w_k, im_b_k])
+                                functions.change_status(selected_checker,
+                                                        [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
+                                                         [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
                             selected_checker = None
                             s.moving_color = 'black' if s.moving_color == 'white' else 'white'

@@ -120,11 +120,17 @@ def change_status(checker, images, need_changing=True):
     checker.is_king = True
 
     if need_changing:
-        w_image, b_image = images[0], images[1]
+        FPS = 10
+        clock = pygame.time.Clock()
+        w_images, b_images = images[0], images[1]
         if checker.color == 'white':
-            checker.image = w_image
+            for image in w_images:
+                checker.image = image
+                clock.tick(FPS)
         else:
-            checker.image = b_image
+            for image in b_images:
+                checker.image = image
+                clock.tick(FPS)
 
 
 def special_check(x1, y1, x2, y2, all_checkers):
