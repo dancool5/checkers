@@ -293,10 +293,8 @@ def AI_turn(board, depth):
     return best_move
 
 
-def collect_moves(board):
+def collect_moves(board, moving_ch, not_moving_ch):
     moves = []
-    moving_ch = [ch for ch in board.board if ch.color == s.moving_color]
-    not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
     kills = is_killing_possible(moving_ch, not_moving_ch, board.board, True)
 
 

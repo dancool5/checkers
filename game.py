@@ -117,6 +117,7 @@ clock = pygame.time.Clock()
 
 is_paused = False
 running = True
+replay = False  # для AI
 
 while running:
     black_ch = [checker for checker in board.board if checker.color == 'black']
@@ -147,7 +148,13 @@ while running:
 
     if s.AI and player_color != s.moving_color:  # ход AI
         pygame.time.wait(500)
-        moves, is_killing = functions.collect_moves(board)
+        if replay:
+            moving_ch = [kill_ch]
+        else:
+            moving_ch = [ch for ch in board.board if ch.color == s.moving_color]
+
+        not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
+        moves, is_killing = functions.collect_moves(board, moving_ch, not_moving_ch)
 
         if moves:
             move = random.choice(moves)
@@ -171,7 +178,10 @@ while running:
 
             if not (functions.is_killing_possible([kill_ch], not_moving_ch, board.board)):
                 # если повторная рубка невозможна, то меняем ход
+                replay = False
                 s.moving_color = 'black' if s.moving_color == 'white' else 'white'
+            else:
+                replay = True
 
         elif moves:
             move_checker, x_move, y_move = move[0], *move[1]
