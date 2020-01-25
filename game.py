@@ -1,3 +1,4 @@
+import random
 import runpy
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
@@ -59,13 +60,15 @@ if s.arrangement:
                 checker = Checker(col, line, 'white', all_sprites, im_w_ch, cell_length)
                 board.board.append(checker)
                 if char == 'W' or line == 0:
-                    functions.change_status(checker, [im_w_k, im_b_k])
+                    functions.change_status(checker, [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
+                                            [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
             elif char.lower() == 'b':
                 checker = Checker(col, line, 'black', all_sprites, im_b_ch, cell_length)
                 board.board.append(checker)
                 if char == 'B' or line == s.lines - 1:
-                    functions.change_status(checker, [im_w_k, im_b_k])
+                    functions.change_status(checker, [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
+                                            [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
         if char != '\n':
             col += 1
@@ -143,15 +146,42 @@ while running:
     pygame.display.flip()
 
     if s.AI and player_color != s.moving_color:  # ход AI
-        old_moving_color = s.moving_color
-        new_board = Board(cell_length)
-        new_board.board = board.board.copy()
+        pygame.time.wait(500)
+        moves, is_killing = functions.collect_moves(board)
 
-        move = functions.AI_turn(new_board, 6)
+        if moves:
+            move = random.choice(moves)
 
-        s.moving_color = old_moving_color
-        s.moving_color = 'black' if s.moving_color == 'white' else 'white'
-        print(move)
+        if is_killing and moves:
+            kill_ch, killed_ch, x_kill, y_kill = move[0], move[1], *move[2]
+
+            win_sound = pygame.mixer.Sound('data/Audio/killing.wav')
+            win_sound.play()
+
+            board.board.remove(killed_ch)
+            all_sprites.remove(killed_ch)
+            flag_king = kill_ch.make_move(x_kill, y_kill, board.is_rotate)
+
+            if flag_king:
+                functions.change_status(kill_ch,
+                                        [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
+                                         [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
+
+            not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
+
+            if not (functions.is_killing_possible([kill_ch], not_moving_ch, board.board)):
+                # если повторная рубка невозможна, то меняем ход
+                s.moving_color = 'black' if s.moving_color == 'white' else 'white'
+
+        elif moves:
+            move_checker, x_move, y_move = move[0], *move[1]
+            flag_king = move_checker.make_move(x_move, y_move, board.is_rotate)
+
+            if flag_king:
+                functions.change_status(move_checker,
+                                        [[im_w_ch_k1, im_w_ch_k2, im_b_ch_k3, im_w_k],
+                                         [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
+            s.moving_color = 'black' if s.moving_color == 'white' else 'white'
 
     else:
         for event in pygame.event.get():
