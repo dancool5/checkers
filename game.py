@@ -60,14 +60,14 @@ if s.arrangement:
                 checker = Checker(col, line, 'white', all_sprites, im_w_ch, cell_length)
                 board.board.append(checker)
                 if char == 'W' or line == 0:
-                    functions.change_status(checker, [[im_w_ch_k1, im_w_ch_k2, im_w_ch_k3, im_w_k],
+                    checker.change_status([[im_w_ch_k1, im_w_ch_k2, im_w_ch_k3, im_w_k],
                                             [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
             elif char.lower() == 'b':
                 checker = Checker(col, line, 'black', all_sprites, im_b_ch, cell_length)
                 board.board.append(checker)
                 if char == 'B' or line == s.lines - 1:
-                    functions.change_status(checker, [[im_w_ch_k1, im_w_ch_k2, im_w_ch_k3, im_w_k],
+                    checker.change_status([[im_w_ch_k1, im_w_ch_k2, im_w_ch_k3, im_w_k],
                                             [im_b_ch_k1, im_b_ch_k2, im_b_ch_k3, im_b_k]])
 
         if char != '\n':

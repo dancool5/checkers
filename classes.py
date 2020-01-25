@@ -41,7 +41,7 @@ class Checker(pygame.sprite.Sprite):
         return False
 
     def update(self):
-        if self.is_update:
+        if self.is_update and self.num_image < 4 and not self.is_king:
             if self.color == 'white':
                 self.image = self.images[0][self.num_image]
             else:
@@ -53,10 +53,10 @@ class Checker(pygame.sprite.Sprite):
             self.num_image += 1
             if self.num_image > 3:
                 self.is_update = False
+                self.is_king = True
 
     def change_status(self, images):
         self.is_update = True
-        self.is_king = True
         self.images = images
         self.num_image = 0
 
