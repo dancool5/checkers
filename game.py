@@ -158,6 +158,8 @@ while running:
 
         if moves:
             move = random.choice(moves)
+        else:
+            s.moving_color = 'black' if s.moving_color == 'white' else 'white'
 
         if is_killing and moves:
             kill_ch, killed_ch, x_kill, y_kill = move[0], move[1], *move[2]
@@ -312,6 +314,11 @@ while running:
         s.width, s.height = old_width, old_height
         pygame.time.wait(250)
         runpy.run_module('menu')
+
+    moving_ch = [ch for ch in board.board if ch.color == s.moving_color]
+    not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
+    if not functions.collect_moves(board, moving_ch, not_moving_ch):
+        s.moving_color = 'black' if s.moving_color == 'white' else 'white'
 
     clock.tick(FPS)
 

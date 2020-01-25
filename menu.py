@@ -45,8 +45,12 @@ if s.state == 'main_menu':
     buttons.append(button_exit)
 
 elif s.state == 'end_game':
-    win_sound = pygame.mixer.Sound('data/Audio/winning.wav')
-    win_sound.play()
+    if s.player_color == s.winner:
+        end_sound = pygame.mixer.Sound('data/Audio/winning.wav')
+        end_sound.play()
+    else:
+        end_sound = pygame.mixer.Sound('data/Audio/losing.wav')
+        end_sound.play()
 
     s.moving_color = 'white'
     if s.winner == 'white':
@@ -187,11 +191,15 @@ while running:
 
             elif s.state == 'end_game':
                 if button_again.is_pressed(event.pos):
+                    end_sound.set_volume(0)
+
                     buttons, buttons_sprites = functions.start_game(old_width, old_height)
                     runpy.run_module('game')
                     running = False
 
                 elif button_main_menu.is_pressed(event.pos):
+                    end_sound.set_volume(0)
+
                     s.state = 'main_menu'
                     s.arrangement = None
 
@@ -214,6 +222,8 @@ while running:
                     pygame.time.wait(250)
 
                 elif button_exit.is_pressed(event.pos):
+                    end_sound.set_volume(0)
+
                     s.arrangement = None
                     running = False
 
