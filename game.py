@@ -1,13 +1,10 @@
 import runpy
-
-from tkinter.filedialog import askopenfilename
 from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 
-import pygame
-
-from classes import *
 import functions
 import settings as s
+from classes import *
 
 pygame.init()
 
@@ -46,17 +43,18 @@ if s.arrangement:
     elif s.arrangement[0] == 'b':
         s.moving_color = 'black'
     for char in s.arrangement[2:]:
-        if char.lower() == 'w':
-            checker = Checker(col, line, 'white', all_sprites, im_w_ch, cell_length)
-            board.board.append(checker)
-            if char == 'W':
-                functions.change_status(checker, [im_w_k, im_b_k])
+        if line < s.lines and col < s.cols and line % 2 != col % 2:
+            if char.lower() == 'w':
+                checker = Checker(col, line, 'white', all_sprites, im_w_ch, cell_length)
+                board.board.append(checker)
+                if char == 'W' or line == 0:
+                    functions.change_status(checker, [im_w_k, im_b_k])
 
-        elif char.lower() == 'b':
-            checker = Checker(col, line, 'black', all_sprites, im_b_ch, cell_length)
-            board.board.append(checker)
-            if char == 'B':
-                functions.change_status(checker, [im_w_k, im_b_k])
+            elif char.lower() == 'b':
+                checker = Checker(col, line, 'black', all_sprites, im_b_ch, cell_length)
+                board.board.append(checker)
+                if char == 'B' or line == s.lines - 1:
+                    functions.change_status(checker, [im_w_k, im_b_k])
 
         if char != '\n':
             col += 1
@@ -133,99 +131,111 @@ while running:
 
     pygame.display.flip()
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == pygame.BUTTON_LEFT:
-            if is_paused:
-                if button_continue.is_pressed(event.pos):
-                    is_paused = False
+    if s.AI and player_color != s.moving_color:  # ход AI
+        old_moving_color = s.moving_color
+        new_board = Board(cell_length)
+        new_board.board = board.board.copy()
 
-                elif button_save.is_pressed(event.pos):
-                    Tk().withdraw()
-                    try:
-                        file_name = askopenfilename()
-                        f = open(file_name, 'w')
+        move = functions.AI_turn(new_board, 6)
 
-                        move_col = 'w' if s.moving_color == 'white' else 'b'
-                        f.write(move_col + '\n')
+        s.moving_color = old_moving_color
+        s.moving_color = 'black' if s.moving_color == 'white' else 'white'
+        print(move)
 
-                        arr = [['0' for col in range(s.cols)] for line in range(s.lines)]
+    else:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == pygame.BUTTON_LEFT:
+                if is_paused:
+                    if button_continue.is_pressed(event.pos):
+                        is_paused = False
 
-                        if board.is_rotate:
-                            board.rotate()
-                            was_rotated = True
-                        else:
-                            was_rotated = False
+                    elif button_save.is_pressed(event.pos):
+                        Tk().withdraw()
+                        try:
+                            file_name = askopenfilename()
+                            f = open(file_name, 'w')
 
-                        for checker in board.board:
-                            if checker.color == 'white':
-                                char = 'w'
-                            elif checker.color == 'black':
-                                char = 'b'
-                            if checker.is_king:
-                                char = char.upper()
-                            arr[checker.y][checker.x] = char
+                            move_col = 'w' if s.moving_color == 'white' else 'b'
+                            f.write(move_col + '\n')
 
-                        for line in range(s.lines):
-                            f.write(''.join(arr[line]) + '\n')
+                            arr = [['0' for col in range(s.cols)] for line in range(s.lines)]
 
-                        if was_rotated:
-                            board.rotate()
+                            if board.is_rotate:
+                                board.rotate()
+                                was_rotated = True
+                            else:
+                                was_rotated = False
 
-                        f.close()
+                            for checker in board.board:
+                                if checker.color == 'white':
+                                    char = 'w'
+                                elif checker.color == 'black':
+                                    char = 'b'
+                                if checker.is_king:
+                                    char = char.upper()
+                                arr[checker.y][checker.x] = char
 
-                    except FileNotFoundError:
-                        pass
+                            for line in range(s.lines):
+                                f.write(''.join(arr[line]) + '\n')
 
-                elif button_exit.is_pressed(event.pos):
-                    running = False
+                            if was_rotated:
+                                board.rotate()
 
-            else:
-                x, y = board.get_cell(event.pos)
-                other_checker = functions.select(x, y, board.board, s.moving_color, event.pos)
+                            f.close()
 
-                if type(other_checker) == Checker:
-                    # если шашка правильного цвета, то выделение перемещается на нее
-                    selected_checker = other_checker
-                elif other_checker is None and selected_checker is not None and x is not None:
-                    # если выделена клетка без шашки
-                    moving_ch = [ch for ch in board.board if ch.color == s.moving_color]
-                    not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
+                        except FileNotFoundError:
+                            pass
 
-                    if functions.is_killing_possible(moving_ch, not_moving_ch, board.board):
-                        # если есть ходы c рубкой
-                        killed_checker = functions.find_killed_checker(selected_checker,
-                                                                       board.board, x, y, not_moving_ch)
-                        if functions.can_kill(selected_checker, killed_checker, board.board, x, y, True):
-                            # если данная рубка возможна
-                            board.board.remove(killed_checker)
-                            all_sprites.remove(killed_checker)
+                    elif button_exit.is_pressed(event.pos):
+                        running = False
+
+                else:
+                    x, y = board.get_cell(event.pos)
+                    other_checker = functions.select(x, y, board.board, s.moving_color, event.pos)
+
+                    if type(other_checker) == Checker:
+                        # если шашка правильного цвета, то выделение перемещается на нее
+                        selected_checker = other_checker
+                    elif other_checker is None and selected_checker is not None and x is not None:
+                        # если выделена клетка без шашки
+                        moving_ch = [ch for ch in board.board if ch.color == s.moving_color]
+                        not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
+
+                        if functions.is_killing_possible(moving_ch, not_moving_ch, board.board):
+                            # если есть ходы c рубкой
+                            killed_checker = functions.find_killed_checker(selected_checker,
+                                                                           board.board, x, y, not_moving_ch)
+                            if functions.can_kill(selected_checker, killed_checker, board.board, x, y, True):
+                                # если данная рубка возможна
+                                board.board.remove(killed_checker)
+                                all_sprites.remove(killed_checker)
+                                flag_king = selected_checker.make_move(x, y, board.is_rotate)
+
+                                if flag_king:
+                                    functions.change_status(selected_checker, [im_w_k, im_b_k])
+
+                                not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
+                                if not(functions.is_killing_possible([selected_checker], not_moving_ch, board.board)):
+                                    # если повторная рубка невозможна, то меняем ход
+                                    s.moving_color = 'black' if s.moving_color == 'white' else 'white'
+                                    # board.rotate()
+                                    selected_checker = None
+
+                        elif functions.can_move(selected_checker, x, y, s.moving_color, board):
+                            # если рубка невозможна, но возможен ход
                             flag_king = selected_checker.make_move(x, y, board.is_rotate)
 
                             if flag_king:
                                 functions.change_status(selected_checker, [im_w_k, im_b_k])
 
-                            not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
-                            if not(functions.is_killing_possible([selected_checker], not_moving_ch, board.board)):
-                                # если повторная рубка невозможна, то меняем ход
-                                s.moving_color = 'black' if s.moving_color == 'white' else 'white'
-                                # board.rotate()
-                                selected_checker = None
+                            selected_checker = None
+                            s.moving_color = 'black' if s.moving_color == 'white' else 'white'
+                            # board.rotate()
 
-                    elif functions.can_move(selected_checker, x, y, s.moving_color, board):
-                        # если рубка невозможна, но возможен ход
-                        flag_king = selected_checker.make_move(x, y, board.is_rotate)
-
-                        if flag_king:
-                            functions.change_status(selected_checker, [im_w_k, im_b_k])
-
-                        selected_checker = None
-                        s.moving_color = 'black' if s.moving_color == 'white' else 'white'
-                        # board.rotate()
-
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            is_paused = not is_paused
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                is_paused = not is_paused
 
     # проверка на конец игры
     s.winner = functions.check_winning(black_ch, white_ch)

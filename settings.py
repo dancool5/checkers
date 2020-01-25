@@ -7,3 +7,5 @@ state = 'main_menu'
 player_color = 'white'
 winner = None
 arrangement = None
+
+AI = False

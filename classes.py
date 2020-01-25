@@ -26,10 +26,10 @@ class Checker(pygame.sprite.Sprite):
         self.rect.x = self.left + self.cell_length * self.x
         self.rect.y = self.top + self.cell_length * self.y
         if is_rotate:
-            if (self.color == 'white' and self.y == 7) or (self.y == 0 and self.color == 'black'):
+            if (self.color == 'white' and self.y == lines - 1) or (self.y == 0 and self.color == 'black'):
                 return True
         else:
-            if (self.color == 'white' and self.y == 0) or (self.y == 7 and self.color == 'black'):
+            if (self.color == 'white' and self.y == 0) or (self.y == lines - 1 and self.color == 'black'):
                 return True
 
         return False

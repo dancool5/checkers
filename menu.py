@@ -132,14 +132,21 @@ while running:
 
             elif s.state == 'count_players':
                 if button_1player.is_pressed(event.pos):
+                    s.AI = True
+
                     count_player = 1
                     flag = True
+
                 elif button_2player.is_pressed(event.pos):
+                    s.AI = False
+
                     count_player = 2
                     flag = True
 
                 if flag:
                     if count_player == 2:
+                        s.player_color = None
+
                         buttons, buttons_sprites = functions.start_game(old_width, old_height)
 
                         pygame.time.wait(250)

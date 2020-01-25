@@ -56,11 +56,18 @@ def can_kill(checker1, checker2, all_checkers, x, y, flag):
         return True
 
 
-def is_killing_possible(moving_checkers, not_moving_checkers, all_checkers):
+def is_killing_possible(moving_checkers, not_moving_checkers, all_checkers, is_AI=False):
+    possible_killings = []
     for checker1 in moving_checkers:
         for checker2 in not_moving_checkers:
             if can_kill(checker1, checker2, all_checkers, None, None, False):
-                return True
+                if is_AI:
+                    possible_killings.append((checker1, checker2))
+                else:
+                    return True
+    if is_AI:
+        return possible_killings
+
     return False
 
 
@@ -109,13 +116,15 @@ def check_winning(black_ch, white_ch):
     return None
 
 
-def change_status(checker, images):
+def change_status(checker, images, need_changing=True):
     checker.is_king = True
-    w_image, b_image = images[0], images[1]
-    if checker.color == 'white':
-        checker.image = w_image
-    else:
-        checker.image = b_image
+
+    if need_changing:
+        w_image, b_image = images[0], images[1]
+        if checker.color == 'white':
+            checker.image = w_image
+        else:
+            checker.image = b_image
 
 
 def special_check(x1, y1, x2, y2, all_checkers):
@@ -144,7 +153,7 @@ def special_check(x1, y1, x2, y2, all_checkers):
 
 
 def load_image(name):
-    fullname = path.join('data', name)
+    fullname = path.join('data/Images', name)
     im = pygame.image.load(fullname).convert_alpha()
     return im
 
@@ -195,3 +204,95 @@ def declination(checkers, color):  # функция для правильног�
     elif count > 4 or count == 0:
         return str(count) + ' ' + color[0] + ' шашек'
     return str(count) + ' ' + color[0] + ' шашки'
+
+move_ = ()
+score = -1000
+best_score = 0
+best_move = ()
+
+def AI_turn(board, depth):
+    global score, best_score, move_, best_move
+    moves, is_killing = collect_moves(board)
+
+    for move in moves:
+        if is_killing:
+            checker1, checker2, x_kill, y_kill = move[0], move[1], move[2][0], move[2][1]
+            if can_kill(checker1, checker2, board.board, x_kill, y_kill, True):
+                # если данная рубка возможна
+                board.board.remove(checker2)
+                if s.moving_color == s.player_color:
+                    score -= 10
+                else:
+                    score += 10
+
+                flag_king = checker1.make_move(x_kill, y_kill, board.is_rotate)
+
+                if flag_king:
+                    if s.moving_color == s.player_color:
+                        score -= 5
+                    else:
+                        score += 5
+
+                    change_status(checker1, [], False)
+
+                moves, is_killing = collect_moves(board)
+                if not is_killing:
+                    s.moving_color = 'black' if s.moving_color == 'white' else 'white'
+                    if depth == 0:
+                        if best_score < score:
+                            best_score = score
+                            best_move = move
+                    elif depth == 6:
+                        move_ = (checker1, checker2, x_kill, y_kill)
+                    else:
+                        AI_turn(board, depth - 1)
+                else:
+                    AI_turn(board, depth)
+
+        else:
+            checker1, x_move, y_move = move[0], move[1][0], move[1][1]
+            if s.moving_color != s.player_color:
+                score -= 1
+            flag_king = checker1.make_move(x_move, y_move, board.is_rotate)
+
+            if flag_king:
+                change_status(checker1, [], False)
+
+            s.moving_color = 'black' if s.moving_color == 'white' else 'white'
+
+            if depth == 0:
+                if best_score < score:
+                    best_score = score
+                    best_move = move
+            elif depth == 6:
+                move_ = (checker1, x_move, y_move)
+            else:
+                AI_turn(board, depth - 1)
+
+    return best_move
+
+def collect_moves(board):
+    moves = []
+
+    moving_ch = [ch for ch in board.board if ch.color == s.moving_color]
+    not_moving_ch = [ch for ch in board.board if ch.color != s.moving_color]
+    kills = is_killing_possible(moving_ch, not_moving_ch, board.board, True)
+
+    if kills:
+        for kill in kills:
+            checker1, checker2 = kill[0], kill[1]
+            if checker1.is_king:
+                pass
+            else:
+                moves.append((checker1, checker2, ((checker1.x - checker2.x) * 2 + checker1.x,
+                                                   (checker1.y - checker2.y) * 2 + checker1.y)))
+    else:
+        for checker in board.board:
+            if checker.is_king:
+                pass
+            else:
+                for i in range(4):
+                    if can_move(checker, checker.x + (i > 1), checker.y + (i % 2 == 0),
+                                          s.moving_color, board):
+                        moves.append((checker, (checker.x + (i > 1), checker.y + (i % 2 == 0))))
+    return moves, (kills != [])
