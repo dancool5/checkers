@@ -45,7 +45,7 @@ if s.state == 'main_menu':
     buttons.append(button_exit)
 
 elif s.state == 'end_game':
-    if s.player_color == s.winner:
+    if s.player_color == s.winner or s.player_color == None:
         end_sound = pygame.mixer.Sound('data/Audio/winning.wav')
         end_sound.play()
     else:
